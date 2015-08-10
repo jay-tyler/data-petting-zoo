@@ -1,15 +1,15 @@
 # Regex patterns that match naming conventions. See here:
 # https://en.wikipedia.org/wiki/List_of_generic_forms_in_place_names_in_the_United_Kingdom_and_Ireland
 name_rules = {
-    "aberP": ("(Aber)"),
+    "aberP": ("(Aber)",),
     "acPaccPockS": ("(Ac)", "(Acc)", "(ock$)"),
     "afonSavonQ": ("(afon$)", "([aA]von)"),
     "arPardP": ("(Ar)", "(Ard)"),
-    "byS": ("(by$)"),
-    "ashP": ("(Ash)"),
-    "astP": ("(Ast)"),
+    "byS": ("(by$)",),
+    "ashP": ("(Ash)",),
+    "astP": ("(Ast)",),
     "auchenPauchinPauchachP": ("(Auchen)", "(Auchin)", "(Auchach)"),
-    "auchterP": ("(Auchter)"),
+    "auchterP": ("(Auchter)",),
     "axPexePaxeAeskA": ("(Ax)", "(Exe)", "(Usk)", "(Esk)"),
     "aySeyS": ("(ay$)", "(ey$)"),
 }
