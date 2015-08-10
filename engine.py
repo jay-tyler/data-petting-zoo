@@ -12,7 +12,7 @@ gb = pd.read_pickle("data/pickles/gb.pk1")
 
 
 def setgb(file_path):
-    """Read the GB.txt file from geonames and return an appropriately 
+    """Read the GB.txt file from geonames and return an appropriately
     filtered DataFrame"""
     gb = pd.read_table(file_path)
     column_names = ['geoid', 'name', 'asciiname', 'altname', 'lat', 'long',
@@ -28,18 +28,19 @@ def setgb(file_path):
     # Pick only feature codes that correspond to towns and cities, see
     # http://www.geonames.org/export/codes.html
     gb = gb[gb.feature_code.isin(geofeat_rules)]
+    gb.index = range(len(gb))
     return gb
 
 
 def setfam(dfin):
-    """In-place setup name families for df dataframe. 
+    """In-place setup name families for df dataframe.
 
     Note: this only acts on the 'name' field. Use another function to setup
     altname families
 
     Column changes: will add a ls_namefam column
 
-    TODO: This is a one run deal. Fix.
+    TODO: This is a one run deal; not idempotent. Fix.
     """
     df = dfin.copy()
     df["ls_namefam"] = np.nan
@@ -92,8 +93,6 @@ def patinstr(string, patlist):
 
 
 if __name__ == "__main__":
-    from engine import setup_gb_dataframe_from_pristine as sgb
-    from engine import setup_name_families as snf
     gbf = 'data/pristine/GB.txt'
     gb = setgb(gbf)
     other = setfam(gb)
