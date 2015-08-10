@@ -3,6 +3,7 @@ Jinja2==2.8
 MarkupSafe==0.23
 PasteDeploy==1.5.2
 pyramid==1.5.7
+pyramid-jinja2==2.5
 pyramid-tm==0.12
 repoze.lru==0.6
 SQLAlchemy==1.0.8
