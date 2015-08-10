@@ -1,4 +1,4 @@
-d3.json("project_shapefiles/uk.json", function(error, uk) {
+d3.json("/static/js/project_shapefiles/uk.json", function(error, uk) {
     if (error) return console.error(error);
 
     var width = 960;
@@ -32,7 +32,7 @@ d3.json("project_shapefiles/uk.json", function(error, uk) {
 
 
 
-var dataset = [];
+// var dataset = [];
 
 // var projection = d3.geo.mercator()
 //                    .center([0, 5])
@@ -67,68 +67,68 @@ var dataset = [];
 
 // svg.call(zoom);
 
-d3.csv(
-    "modified_gb.csv",
-    function(error, data) {
-        if (error) {
-            console.log(error);
-        }
+// d3.csv(
+//     "modified_gb.csv",
+//     function(error, data) {
+//         if (error) {
+//             console.log(error);
+//         }
 
-        else {
-            dataset = data;
+//         else {
+//             dataset = data;
 
-            var w = 1000;
-            var h = 500;
+//             var w = 1000;
+//             var h = 500;
 
-            padding = 50;
+//             padding = 50;
 
-            var xScale = d3.scale.linear()
-                           .range([10 * padding, w - padding])
-                           .domain(d3.extent(dataset, function(d) { return d.lng; }));
-                           // .domain([
-                           //      d3.min(dataset, function(d) { return d['lng']; }),
-                           //      d3.max(dataset, function(d) { return d['lng']; })
-                           //  ]);
+//             var xScale = d3.scale.linear()
+//                            .range([10 * padding, w - padding])
+//                            .domain(d3.extent(dataset, function(d) { return d.lng; }));
+//                            // .domain([
+//                            //      d3.min(dataset, function(d) { return d['lng']; }),
+//                            //      d3.max(dataset, function(d) { return d['lng']; })
+//                            //  ]);
 
-            var yScale = d3.scale.linear()
-                           .range([h - padding, padding])
-                           .domain([
-                                d3.max(dataset, function(d) { return d.lat; }),
-                                d3.min(dataset, function(d) { return d.lat; })
-                            ]);
+//             var yScale = d3.scale.linear()
+//                            .range([h - padding, padding])
+//                            .domain([
+//                                 d3.max(dataset, function(d) { return d.lat; }),
+//                                 d3.min(dataset, function(d) { return d.lat; })
+//                             ]);
 
-            var xAxis = d3.svg.axis()
-                              .scale(xScale)
-                              .orient('bottom')
-                              .ticks(5);
+//             var xAxis = d3.svg.axis()
+//                               .scale(xScale)
+//                               .orient('bottom')
+//                               .ticks(5);
 
-            var yAxis = d3.svg.axis()
-                              .scale(yScale)
-                              .orient('left')
-                              .ticks(5);
+//             var yAxis = d3.svg.axis()
+//                               .scale(yScale)
+//                               .orient('left')
+//                               .ticks(5);
 
-            var svg = d3.select('.latlong-scatter')
-                        .append('svg')
-                        .attr('width', w)
-                        .attr('height', h);
+//             var svg = d3.select('.latlong-scatter')
+//                         .append('svg')
+//                         .attr('width', w)
+//                         .attr('height', h);
 
-            svg.selectAll('circle')
-               .data(dataset)
-               .enter()
-               .append('circle')
-               .attr('cx', function(d) { return xScale(d.lng); } )
-               .attr('cy', function(d) { return yScale(d.lat); } )
-               .attr('r', 2);
+//             svg.selectAll('circle')
+//                .data(dataset)
+//                .enter()
+//                .append('circle')
+//                .attr('cx', function(d) { return xScale(d.lng); } )
+//                .attr('cy', function(d) { return yScale(d.lat); } )
+//                .attr('r', 2);
 
-            svg.append('g')
-                .attr('class', 'axis x-axis')
-                .attr('transform', 'translate(0,' + (h - padding) + ')')
-                .call(xAxis);
+//             svg.append('g')
+//                 .attr('class', 'axis x-axis')
+//                 .attr('transform', 'translate(0,' + (h - padding) + ')')
+//                 .call(xAxis);
 
-            svg.append('g')
-                .attr('class', 'axis y-axis')
-                .attr('transform', 'translate(' + padding + ',0)')
-                .call(yAxis);
-        }
-    }
-);
+//             svg.append('g')
+//                 .attr('class', 'axis y-axis')
+//                 .attr('transform', 'translate(' + padding + ',0)')
+//                 .call(yAxis);
+//         }
+//     }
+// );
