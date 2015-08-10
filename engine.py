@@ -29,7 +29,7 @@ def setup_gb_dataframe_from_pristine(file_path):
     return gb
 
 
-def setup_name_families():
+def setup_name_families(df):
     """In-place setup name families for df dataframe. 
 
     Note: this only acts on the 'name' field. Use another function to setup
@@ -39,17 +39,8 @@ def setup_name_families():
 
     TODO: This is a one run deal. Fix.
     """
-    global df
-    l = df.shape
-
-
-
-
-
-
-
     df = df.copy()
-    # df["ls_namefam"] = np.nan
+    df["ls_namefam"] = np.nan
     # Iterate over rows in dataframe
     for index, row in df.iterrows():
         # For each row, check each name_rule
@@ -59,7 +50,7 @@ def setup_name_families():
                 cur = df.loc[index, 'ls_namefam']
                 if not isinstance(cur, list):
                     print df.loc[index, 'name'], namekey
-                    df.loc[index, 'name'] = list([namekey])
+                    df.loc[index, 'name'] = (list([namekey]))
                 else:
                     df.loc[index, 'name'].append(namekey)
     return df
