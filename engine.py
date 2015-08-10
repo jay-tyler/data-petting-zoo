@@ -41,7 +41,6 @@ def setfam(dfin):
 
     TODO: This is a one run deal. Fix.
     """
-    # import pdb; pdb.set_trace()
     df = dfin.copy()
     df["ls_namefam"] = np.nan
     # Iterate over rows in dataframe
@@ -51,16 +50,10 @@ def setfam(dfin):
             result = patinstr(row.loc['name'], ls_regex)
             if result:
                 cur = df.loc[index, 'ls_namefam']
-                # import pdb; pdb.set_trace()
                 if not isinstance(cur, list):
                     df.loc[index, 'ls_namefam'] = list([namekey])
-                    # df.set_value(index, 'ls_namefam', list([namekey]))
                 else:
                     df.loc[index, 'ls_namefam'].append(namekey)
-                    # lscpy = df.loc[index, 'name']
-                    # lscpy.append(namekey)
-                    # df.set_value(index, 'ls_namefam', lscpy)
-    import pdb; pdb.set_trace()
     return df
 
     # list([name]) if not isinstance(cur, list) else cur.append(name)
