@@ -15,6 +15,13 @@
 
 <body>
 
+    <header>
+    {% for i in range(6) %}
+        <img class="sheep sheep{{ i }}" src="/static/img/sheep.png" />
+    {% endfor %}
+
+    </header>
+
     {% block main_content %}
     {% endblock %}
 
