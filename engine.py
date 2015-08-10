@@ -11,7 +11,9 @@ pd.set_option('mode.chained_assignment', 'warn')
 gb = pd.read_pickle("data/pickles/gb.pk1")
 
 
-def setup_gb_dataframe_from_pristine(file_path):
+def setgb(file_path):
+    """Read the GB.txt file from geonames and return an appropriately 
+    filtered DataFrame"""
     gb = pd.read_table(file_path)
     column_names = ['geoid', 'name', 'asciiname', 'altname', 'lat', 'long',
         'feature_class', 'feature_code', 'country_code', 'cc2', 'adm1', 'adm2',
@@ -29,7 +31,7 @@ def setup_gb_dataframe_from_pristine(file_path):
     return gb
 
 
-def setup_name_families(df):
+def setfam(dfin):
     """In-place setup name families for df dataframe. 
 
     Note: this only acts on the 'name' field. Use another function to setup
@@ -39,7 +41,8 @@ def setup_name_families(df):
 
     TODO: This is a one run deal. Fix.
     """
-    df = df.copy()
+    # import pdb; pdb.set_trace()
+    df = dfin.copy()
     df["ls_namefam"] = np.nan
     # Iterate over rows in dataframe
     for index, row in df.iterrows():
@@ -48,15 +51,19 @@ def setup_name_families(df):
             result = patinstr(row.loc['name'], ls_regex)
             if result:
                 cur = df.loc[index, 'ls_namefam']
+                # import pdb; pdb.set_trace()
                 if not isinstance(cur, list):
-                    print df.loc[index, 'name'], namekey
-                    df.loc[index, 'name'] = (list([namekey]))
+                    df.loc[index, 'ls_namefam'] = list([namekey])
+                    # df.set_value(index, 'ls_namefam', list([namekey]))
                 else:
-                    df.loc[index, 'name'].append(namekey)
+                    df.loc[index, 'ls_namefam'].append(namekey)
+                    # lscpy = df.loc[index, 'name']
+                    # lscpy.append(namekey)
+                    # df.set_value(index, 'ls_namefam', lscpy)
+    import pdb; pdb.set_trace()
     return df
 
     # list([name]) if not isinstance(cur, list) else cur.append(name)
-
     # gb['ls_altname'].map(lambda x:patinls(x, patlist))
 
 
@@ -89,3 +96,13 @@ def patinstr(string, patlist):
             break
 
     return found
+
+
+if __name__ == "__main__":
+    from engine import setup_gb_dataframe_from_pristine as sgb
+    from engine import setup_name_families as snf
+    gbf = 'data/pristine/GB.txt'
+    gb = setgb(gbf)
+    other = setfam(gb)
+
+    print other['ls_namefam'].dropna()

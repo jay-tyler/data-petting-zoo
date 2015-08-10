@@ -10,7 +10,7 @@ name_rules = {
     "astP": ("(Ast)",),
     "auchenPauchinPauchachP": ("(Auchen)", "(Auchin)", "(Auchach)"),
     "auchterP": ("(Auchter)",),
-    "axPexePaxeAeskA": ("(Ax)", "(Exe)", "(Usk)", "(Esk)"),
+    "axPexePaxeAeskA": ("(Ax)", "(Exe)", "(Axe)", "(Esk)"),
     "aySeyS": ("(ay$)", "(ey$)"),
 }
 
