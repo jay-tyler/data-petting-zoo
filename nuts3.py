@@ -7,7 +7,7 @@ from shapely.prepared import prep
 from shapely import speedups
 
 
-def append_nuts3_region(dfin, shapefile):
+def append_nuts3_region(dfin, shapefile_path):
     """ Take a pandas dataframe with lat and long columns and a shapefile.
     Convert coordinates to Shapely points to do a point-in-polygon check
     for each point. Append name of nuts3 region corresponding to point-in-polygon
@@ -16,7 +16,7 @@ def append_nuts3_region(dfin, shapefile):
     """
     df = dfin.copy()
     df['nuts3'] = np.nan
-    fc = fiona.open(shapefile)
+    fc = fiona.open(shapefile_path)
     speedups.enable()
     for feature in fc:
         prepared_shape = prep(asShape(feature['geometry']))
@@ -28,9 +28,9 @@ def append_nuts3_region(dfin, shapefile):
     return df
 
 
-def append_2013_gva(dfin):
+def append_2013_gva(dfin, csv_file_path):
     df = dfin.copy()
-    gva = pd.read_csv('../gvanuts32014.csv')
+    gva = pd.read_csv(csv_file_path)
     gvasub = DataFrame(columns=['nuts3id', 'gva2013'])
     gvasub['nuts3id'], gvasub['gva2013'] = gva['nutsid'], gva['2013']
     df_gva = pd.merge(
