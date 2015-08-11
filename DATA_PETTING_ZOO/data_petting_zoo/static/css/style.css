@@ -11,14 +11,13 @@ div {
     margin: auto;
 }
 
-.heading_title {
-    position: relative;
-    bottom: 70px;
-    margin: none, auto;
-    color: #fff;
+.header {
+    padding: 2% 0 26%;
+    background: url('/static/img/header.png') center/cover no-repeat;
+    margin-top: -21px;
 }
 
-.sky {
+/*.sky {
     background-color: #48f;
     padding-top: 5%;
     margin: auto;
@@ -60,4 +59,4 @@ div {
 .sheep5 { max-width: 5%; top: 150px; left: 5%; }
 .sheep6 { max-width: 5%; top: 130px; left: 20%; }
 .sheep7 { max-width: 5%; top: 120px; left: 45%; }
-.sheep8 { max-width: 4%; }
+.sheep8 { max-width: 4%; }*/
