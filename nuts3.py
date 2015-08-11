@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+from pandas import DataFrame
 import fiona
 from shapely.geometry import Point, asShape
 from shapely.prepared import prep
@@ -21,5 +23,20 @@ def append_nuts3_region(dfin, shapefile):
         for index, row in df.iterrows():
             point = Point(row.loc['long'], row.loc['lat'])
             if prepared_shape.contains(point):
-                df.loc[index, 'nuts3'] = feature['properties']['NUTS315NM']
+                df.loc[index, 'nuts3name'] = feature['properties']['NUTS315NM']
+                df.loc[index, 'nuts3id'] = feature['properties']['NUTS315CD']
     return df
+
+
+def append_2013_gva(dfin):
+    df = dfin.copy()
+    gva = pd.read_csv('../gvanuts32014.csv')
+    gvasub = DataFrame(columns=['nuts3id', 'gva2013'])
+    gvasub['nuts3id'], gvasub['gva2013'] = gva['nutsid'], gva['2013']
+    df_gva = pd.merge(
+        left=df,
+        right=gvasub.dropna(),
+        how='left',
+        left_on='nuts3id',
+        right_on='nuts3id')
+    return df_gva
