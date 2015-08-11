@@ -12,7 +12,7 @@ var loadData = function(callback) {
             return console.error(error);
         } else {
             mapObject.dataset = uk;
-            callback();
+            makeDefs();
         }
     });
 };
@@ -33,7 +33,7 @@ var makeDefs = function(callback) {
 
     mapObject.path = d3.geo.path().projection(mapObject.projection);
 
-    callback();
+    createNewSVG();
 };
 
 
@@ -44,10 +44,7 @@ var createNewSVG = function(callback) {
         .attr("width", mapObject.width)
         .attr("height", mapObject.height);
 
-    console.log('createNewSVG execution');
-    console.log('dataset:', mapObject.dataset);
-    console.log('dataset.objects', mapObject.dataset.objects);
-    callback();
+    drawMap();
 };
 
 
@@ -63,8 +60,6 @@ var drawMap = function() {
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
         .attr("d", mapObject.path);
-
-    console.log('drawMap execution');
 };
 
 
@@ -80,8 +75,7 @@ var drawLabels = function() {
             )
             .enter()
             .append("text")
-            .attr("class", "country-label " + function(d) {
-                return "subunit-label " + d.id; }
+            .attr("class", "country-label"
             )
             .attr("transform", function(d) {
                 return "translate(" + mapObject.path.centroid(d) + ")";
@@ -107,10 +101,5 @@ $( document ).ready( function() {
 
     $( '#btn-clear-labels' ).click( function(event) { clearLabels(); });
 
-    loadData( function() {
-        makeDefs ( function() {
-            createNewSVG( drawMap );
-        });
-    });
-
+    loadData();
 });
