@@ -1,29 +1,60 @@
-d3.json("/static/js/project_shapefiles/uk.json", function(error, uk) {
-    if (error) return console.error(error);
+var mapObject = {
+    'dataset': {},
+    'width': 760,
+    'height': 1060,
+};
 
-    var width = 960;
-    var height = 1160;
+var loadData = function(callback) {
+    d3.json("/static/js/project_shapefiles/uk.json", function(error, uk) {
+        if (error) {
+            return console.error(error);
+        } else {
+            mapObject.dataset = uk;
+        }
+    });
+    console.log('loadData execution');
+    setTimeout(callback, 200);
+};
 
-    var svg = d3.select(".gb-map").append("svg")
-        .attr("width", width)
-        .attr("height", height);
+var createNewSVG = function(callback) {
+    // create the SVG element that will hold the map
+    var svg = d3.select(".gb-map-content").append("svg")
+        .attr("width", mapObject.width)
+        .attr("height", mapObject.height);
 
-    var subunits = topojson.feature(uk, uk.objects.subunits);
+    console.log('createNewSVG execution');
+    console.log('dataset:', mapObject.dataset);
+    console.log('dataset.objects', mapObject.dataset.objects);
+    callback();
+};
 
+var drawMap = function() {
+
+    var subunits = topojson.feature(mapObject.dataset, mapObject.dataset.objects.subunits);
+
+    //
     var projection = d3.geo.albers()
-        .center([0, 55.4])
+        .center([2, 55.4])
         .rotate([4.4, 0])
         .parallels([50, 60])
-        .scale(6000)
-        .translate([width / 2, height / 2]);
+        .scale(5000)
+        .translate([mapObject.width / 2, mapObject.height / 2]);
 
     var path = d3.geo.path()
         .projection(projection);
 
-    svg.selectAll(".subunit")
-        .data(topojson.feature(uk, uk.objects.subunits).features)
+    d3.select("body").select('svg').selectAll('.subunit')
+        .data(topojson.feature(mapObject.dataset, mapObject.dataset.objects.subunits).features)
         .enter()
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
         .attr("d", path);
-});
+
+    console.log('drawMap execution');
+};
+
+$( document ).ready(
+    loadData( function() {
+        createNewSVG( drawMap );
+    })
+);
