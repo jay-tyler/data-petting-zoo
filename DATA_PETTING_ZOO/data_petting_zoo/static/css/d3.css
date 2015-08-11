@@ -5,16 +5,3 @@ svg {
 .subunit.SCT { fill: #ddc; }
 .subunit.WLS { fill: #cdd; }
 .subunit.ENG { fill: #dcd; }
-
-.axis path,
-.axis line {
-    width: 2px;
-    fill: none;
-    stroke: black;
-    shape-rendering: crispEdges;
-}
-
-.axis test {
-    font-family: sans-serif;
-    font-size: 11px;
-}
