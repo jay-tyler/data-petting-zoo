@@ -23,11 +23,14 @@ def setgb(file_path):
     remove_these_adm1 = ['05', '00', '01', 'NIR', '03']
     for i in remove_these_adm1:
         gb = gb[gb.adm1 != i]
+    # Get rid of adm1 with null values
+    gb = gb[~gb.adm1.isnull()]
     # Setting a list of alternate names from altname string field
     gb['ls_altname'] = gb['altname'].dropna().apply(lambda x: x.split(','))
     # Pick only feature codes that correspond to towns and cities, see
     # http://www.geonames.org/export/codes.html
     gb = gb[gb.feature_code.isin(geofeat_rules)]
+    # Clean up index
     gb.index = range(len(gb))
     return gb
 
@@ -92,9 +95,28 @@ def patinstr(string, patlist):
     return found
 
 
+def getfamdf(df, namekey):
+    """Get dataframe subset from df for rows belonging to the family
+    which is a sub"""
+    def _droidfind(listin):
+        result = None
+        try:
+            result = namekey in listin
+        except TypeError:
+            pass
+        return result if result is True else None
+    mask = df['ls_namefam'].map(lambda x: _droidfind(x))
+    return df[~mask.isnull()]
+
+
 if __name__ == "__main__":
     gbf = 'data/pristine/GB.txt'
     gb = setgb(gbf)
     other = setfam(gb)
 
     print other['ls_namefam'].dropna()
+
+
+# patlist = name_rules[namekey]
+# invmask = gb['ls_altname'].map(lambda x:patinls(x, patlist)).isnull()
+# return df[~invmask]
