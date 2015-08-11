@@ -1,0 +1,63 @@
+html {
+    box-sizing: border-box;
+}
+
+html,
+body,
+header,
+div {
+    width: 100%;
+    text-align: center;
+    margin: auto;
+}
+
+.heading_title {
+    position: relative;
+    bottom: 70px;
+    margin: none, auto;
+    color: #fff;
+}
+
+.sky {
+    background-color: #48f;
+    padding-top: 5%;
+    margin: auto;
+    position: relative;
+    z-index: -1;
+}
+
+.grass {
+    background-color: #494;
+    padding-top: 20%;
+    margin: auto;
+    position: relative;
+    bottom: 40px;
+    z-index: -1;
+}
+
+.sheep {
+    float: left;
+    position: relative;
+}
+
+.sheep0,
+.sheep1,
+.sheep2,
+.sheep3 {
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+}
+
+.sheep0 { max-width: 4%; left: 88%; }
+.sheep1 { max-width: 4%; top: 20px; left: 55%; }
+.sheep2 { max-width: 3%; bottom: 58px; left: 11%; }
+.sheep3 { max-width: 5%; top: 170px; right: 5%; }
+.sheep4 { max-width: 4%; bottom: 10px; right: 15%; }
+.sheep5 { max-width: 5%; top: 150px; left: 5%; }
+.sheep6 { max-width: 5%; top: 130px; left: 20%; }
+.sheep7 { max-width: 5%; top: 120px; left: 45%; }
+.sheep8 { max-width: 4%; }

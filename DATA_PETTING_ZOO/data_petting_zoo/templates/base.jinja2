@@ -6,6 +6,7 @@
     {% endblock %}
 
     <link href='/static/css/style.css' type='text/css' rel='stylesheet'>
+    <link href='/static/css/d3.css' type='text/css' rel='stylesheet'>
 
     {% block title %}
     <title>GeoNames: A Data Petting Zoo</title>
@@ -16,9 +17,20 @@
 <body>
 
     <header>
-    {% for i in range(6) %}
-        <img class="sheep sheep{{ i }}" src="/static/img/sheep.png" />
-    {% endfor %}
+        <div class='sky'>
+            <div class="heading_title">
+                <h1>What's In A Name?</h1>
+                <h2>A Data Petting Zoo</h2>
+            </div>
+        </div>
+
+
+            {% for i in range(9) %}
+            <img class="sheep sheep{{ i }}" src="/static/img/sheep.png" />
+            {% endfor %}
+
+        <div class='grass'>
+        </div>
 
     </header>
 
