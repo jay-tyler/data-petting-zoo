@@ -84,6 +84,8 @@ def patinstr(string, patlist):
     """Search string for a substring instance defined by patlist; return
     re.match if found, None if not found"""
     found = None
+    if not isinstance(string, str):
+        return None
     for pat in patlist:
         found = re.match(pat, string)
         if found:
