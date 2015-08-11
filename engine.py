@@ -60,9 +60,6 @@ def setfam(dfin):
                     df.loc[index, 'ls_namefam'].append(namekey)
     return df
 
-    # list([name]) if not isinstance(cur, list) else cur.append(name)
-    # gb['ls_altname'].map(lambda x:patinls(x, patlist))
-
 
 def patinls(slist, patlist):
     """Search each string in slist for a substring instance defined by patlist;
@@ -91,7 +88,6 @@ def patinstr(string, patlist):
         found = re.match(pat, string)
         if found:
             break
-
     return found
 
 
@@ -109,7 +105,7 @@ def getfamdf(df, namekey):
     return df[~mask.isnull()]
 
 
-def setupalt(df):
+def setalt(df):
     df_alt = df.copy()
     df_alt.drop(['altname'], inplace=True, axis=1)
     df_alt.drop(['ls_altname'], inplace=True, axis=1)
@@ -149,7 +145,7 @@ if __name__ == "__main__":
     gb = setgb(gbf)
     gb2 = setfam(gb)
 
-    print other['ls_namefam'].dropna()
+    print gb2['ls_namefam'].dropna()
 
 
 # patlist = name_rules[namekey]
