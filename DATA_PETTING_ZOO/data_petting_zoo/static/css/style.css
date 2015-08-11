@@ -17,3 +17,12 @@ div {
     margin-top: -21px;
     color: #eee;
 }
+
+.gb-map-heading {
+    margin-bottom: 20px;
+}
+
+svg {
+    border: 2px solid #000;
+    border-radius: 15px;
+}
