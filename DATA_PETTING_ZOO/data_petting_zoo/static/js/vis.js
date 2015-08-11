@@ -4,7 +4,9 @@ var mapObject = {
     'height': 1060,
 };
 
+
 var loadData = function(callback) {
+
     d3.json("/static/js/project_shapefiles/uk.json", function(error, uk) {
         if (error) {
             return console.error(error);
@@ -12,11 +14,33 @@ var loadData = function(callback) {
             mapObject.dataset = uk;
         }
     });
+
     console.log('loadData execution');
     setTimeout(callback, 200);
 };
 
+
+var makeDefs = function(callback) {
+
+    mapObject.subunits = topojson.feature(
+        mapObject.dataset, mapObject.dataset.objects.subunits
+    );
+
+    mapObject.projection = d3.geo.albers()
+        .center([2, 55.4])
+        .rotate([4.4, 0])
+        .parallels([50, 60])
+        .scale(5000)
+        .translate([mapObject.width / 2, mapObject.height / 2]);
+
+    mapObject.path = d3.geo.path().projection(mapObject.projection);
+
+    callback();
+};
+
+
 var createNewSVG = function(callback) {
+
     // create the SVG element that will hold the map
     var svg = d3.select(".gb-map-content").append("svg")
         .attr("width", mapObject.width)
@@ -28,33 +52,67 @@ var createNewSVG = function(callback) {
     callback();
 };
 
+
 var drawMap = function() {
 
-    var subunits = topojson.feature(mapObject.dataset, mapObject.dataset.objects.subunits);
-
-    //
-    var projection = d3.geo.albers()
-        .center([2, 55.4])
-        .rotate([4.4, 0])
-        .parallels([50, 60])
-        .scale(5000)
-        .translate([mapObject.width / 2, mapObject.height / 2]);
-
-    var path = d3.geo.path()
-        .projection(projection);
-
     d3.select("body").select('svg').selectAll('.subunit')
-        .data(topojson.feature(mapObject.dataset, mapObject.dataset.objects.subunits).features)
+        .data(
+            topojson
+                .feature(mapObject.dataset, mapObject.dataset.objects.subunits)
+                .features
+        )
         .enter()
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
-        .attr("d", path);
+        .attr("d", mapObject.path);
 
     console.log('drawMap execution');
 };
 
-$( document ).ready(
+
+var drawLabels = function() {
+
+    if ( $.isEmptyObject(mapObject.dataset) === false ) {
+
+        d3.select('body').select('svg').selectAll(".subunit-label")
+            .data(
+                topojson
+                .feature(mapObject.dataset, mapObject.dataset.objects.subunits)
+                .features
+            )
+            .enter()
+            .append("text")
+            .attr("class", "country-label " + function(d) {
+                return "subunit-label " + d.id; }
+            )
+            .attr("transform", function(d) {
+                return "translate(" + mapObject.path.centroid(d) + ")";
+            })
+            .attr("dy", ".35em")
+            .text(function(d) { return d.properties.name; });
+    }
+};
+
+
+var clearLabels = function() {
+
+    if ( $.isEmptyObject(mapObject.dataset) === false ) {
+
+        d3.selectAll(".country-label").remove();
+    }
+};
+
+
+$( document ).ready( function() {
+
+    $( '#btn-add-labels' ).click( function(event) { drawLabels(); });
+
+    $( '#btn-clear-labels' ).click( function(event) { clearLabels(); });
+
     loadData( function() {
-        createNewSVG( drawMap );
-    })
-);
+        makeDefs ( function() {
+            createNewSVG( drawMap );
+        });
+    });
+
+});
