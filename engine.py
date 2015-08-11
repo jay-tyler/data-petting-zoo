@@ -109,10 +109,45 @@ def getfamdf(df, namekey):
     return df[~mask.isnull()]
 
 
+def setupalt(df):
+    df_alt = df.copy()
+    df_alt.drop(['altname'], inplace=True, axis=1)
+    df_alt.drop(['ls_altname'], inplace=True, axis=1)
+    df_alt['parent'] = np.nan
+    column_names = ['geoid', 'name', 'parent', 'asciiname', 'lat', 'long',
+                     'feature_class', 'feature_code', 'country_code', 'cc2',
+                     'adm1', 'adm2', 'adm3', 'adm4', 'pop', 'elev', 'delev',
+                     'timezone', 'moddate']
+    df_alt = df_alt[column_names]
+
+    # for index, row in df.iterrows():
+    #     parent_name = row['name']
+    #     for a_name in row['ls_altname']:
+    #         df_alt.ix['name', ] = a_name
+    #         df_alt.ix['parent', ] = parent_name
+    i = len(df)
+    for index, row in df.iterrows():
+        parent_name = row['name']
+        try:
+            a_names = iter(row['ls_altname'])
+        except TypeError:
+            pass
+        else:
+            for a_name in a_names:
+                row['name'] = a_name
+                row['parent'] = parent_name
+                # i = len(df)
+                # print df_alt.shape, len(row)
+                # df_alt.loc[df_alt.index == len(df_alt)] = row[column_names]
+                df_alt.ix[i] = row[column_names]
+                i += 1
+    return df_alt
+
+
 if __name__ == "__main__":
     gbf = 'data/pristine/GB.txt'
     gb = setgb(gbf)
-    other = setfam(gb)
+    gb2 = setfam(gb)
 
     print other['ls_namefam'].dropna()
 
