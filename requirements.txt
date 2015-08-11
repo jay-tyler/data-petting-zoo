@@ -1,4 +1,3 @@
-DATA-PETTING-ZOO==0.0
 gunicorn==19.3.0
 Jinja2==2.8
 MarkupSafe==0.23
