@@ -1,0 +1,33 @@
+{% extends 'base.jinja2' %}
+
+
+{% block head_scripts %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src='/static/js/d3.min.js'></script>
+    <script src='/static/js/topojson.js'></script>
+
+{% endblock %}
+
+
+{% block main_content %}
+
+    <div class='gb-map-container'>
+        <div class='gb-map-heading'>
+            <h1>Great Britain</h1>
+            <button id='btn-add-labels'>Add Labels</button>
+            <button id='btn-clear-labels'>Clear Labels</button>
+        </div>
+
+        <div class='gb-map-content'>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block body_scripts %}
+
+    <script src='/static/js/vis.js'></script>
+
+{% endblock %}

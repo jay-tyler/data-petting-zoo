@@ -1,0 +1,7 @@
+svg {
+    pointer-events: none;
+}
+
+.subunit.SCT { fill: #ddc; }
+.subunit.WLS { fill: #cdd; }
+.subunit.ENG { fill: #dcd; }
