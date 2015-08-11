@@ -12,3 +12,15 @@ Getting Started
 
 - $VENV/bin/pserve development.ini
 
+---
+
+## On D3
+
+### Primary article for walking through shapefile-to-GeoJSON conversion
+and SVG map creation:
+
+http://bost.ocks.org/mike/map/
+
+### On the general update pattern:
+
+http://bl.ocks.org/mbostock/3808221

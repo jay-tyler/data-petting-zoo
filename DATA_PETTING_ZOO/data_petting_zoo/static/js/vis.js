@@ -12,11 +12,9 @@ var loadData = function(callback) {
             return console.error(error);
         } else {
             mapObject.dataset = uk;
+            callback();
         }
     });
-
-    console.log('loadData execution');
-    setTimeout(callback, 200);
 };
 
 
