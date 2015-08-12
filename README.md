@@ -1,6 +1,7 @@
 #Description of engine API
 
 ##Setup functions
+
 The engine for data-petting-zoo has several setup functions that enable
 setting up the pandas dataframe from scratch. This is useful for filtering
 tweaks, etc.
@@ -8,17 +9,19 @@ tweaks, etc.
 These functions include:
 
 * setgb(file_path) --> DataFrame: file_path is path to GB.txt geonames
+
 This function reads the GB.txt dataset from file_path and returns a dataframe
 after applying filters for adm1 regions and geofeatures.
 
-* setalt(DataFrame) --> DataFrame: DataFrame
+* setalt(DataFrame, column_names=None) --> DataFrame: DataFrame should only be the dataframe that
+comes after setgb if columns is left undefined; columns is a list of column names that
+the resulting dataframe should contain. This list should include 'parent.'
 
 * setfam(DataFrame) --> DataFrame: DataFrame can be any with a 'name' column
+
 This function applies the regexes from name_rules and establishes an 'ls_namefam'
 column which contains a Python list containing 'namekey's for applying to the
 row. np.nan is used to designate rows without membership to any name family.
-
-
 
 ##Query functions
 
@@ -31,6 +34,12 @@ patlist. Handling for np.nan is provided (returning None).
 string object and patlist is any iterable containing valid regex strings.
 This function searches string for any regex match definied by the iterable
 patlist. Handling for np.nan is provided (returning None).
+
+* getfamdf(DataFrame, namekey) --> DataFrame: DataFrame input can be any
+dataframe that contains an 'ls_namefam' column; namekey should be one of
+the namekeys defined as a key in name_rules.
+The returned DataFrame will be a sub-DataFrame containing rows with instances
+of namekey in 'ls_namefam.'
 
 #Description of geonames columns
 
@@ -47,6 +56,7 @@ patlist. Handling for np.nan is provided (returning None).
 * [Scottish Placename Society](http://www.spns.org.uk/)
 
 #Licensing
+
 * Primary geonames dataset is taken from [geonames.org](http://www.geonames.org) which is distributed
 under a [Creative Commons Attribution 3.0 License](http://creativecommons.org/licenses/by/3.0/).
 * GVA data provided by the UK Office of National Statistics, via [here](http://www.ons.gov.uk/ons/publications/re-reference-tables.html?edition=tcm%3A77-339598).

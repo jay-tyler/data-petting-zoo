@@ -1,14 +1,20 @@
 import pandas as pd
 import numpy as np
 from pandas import Series, DataFrame
-import re
+from re import match
+from random import choice
+from string import capwords, strip
 from rules import name_rules, geofeat_rules
 
 # Warn if a value is being assigned to a copy
 pd.set_option('mode.chained_assignment', 'warn')
 
 # Imports of needed data
-gb = pd.read_pickle("data/pickles/gb.pk1")
+try:
+    gb = pd.read_pickle("data/pickles/gb.pk1")
+except IOError:
+    # TODO: In this case should do a bunch of stuff to get gb into namespace
+    pass
 
 
 def setgb(file_path):
@@ -72,7 +78,7 @@ def patinls(slist, patlist):
     for string in strings:
         if not found:
             for pat in patlist:
-                found = re.match(pat, string)
+                found = match(pat, string)
                 if found:
                     break
         else:
@@ -87,7 +93,7 @@ def patinstr(string, patlist):
     if not isinstance(string, str):
         return None
     for pat in patlist:
-        found = re.match(pat, string)
+        found = match(pat, string)
         if found:
             break
     return found
@@ -107,22 +113,24 @@ def getfamdf(df, namekey):
     return df[~mask.isnull()]
 
 
-def setalt(df):
+def setalt(df, column_names=None):
+    """DataFrame should only be the dataframe that
+    comes after setgb if columns is left undefined; column_names is a list of
+    column names that the resulting dataframe should contain. This list should
+    include 'parent.'"""
+
     df_alt = df.copy()
     df_alt.drop(['altname'], inplace=True, axis=1)
     df_alt.drop(['ls_altname'], inplace=True, axis=1)
     df_alt['parent'] = np.nan
-    column_names = ['geoid', 'name', 'parent', 'asciiname', 'lat', 'long',
+
+    if column_names is None:
+        column_names = ['geoid', 'name', 'parent', 'asciiname', 'lat', 'long',
                      'feature_class', 'feature_code', 'country_code', 'cc2',
                      'adm1', 'adm2', 'adm3', 'adm4', 'pop', 'elev', 'delev',
                      'timezone', 'moddate']
     df_alt = df_alt[column_names]
 
-    # for index, row in df.iterrows():
-    #     parent_name = row['name']
-    #     for a_name in row['ls_altname']:
-    #         df_alt.ix['name', ] = a_name
-    #         df_alt.ix['parent', ] = parent_name
     i = len(df)
     for index, row in df.iterrows():
         parent_name = row['name']
@@ -134,13 +142,33 @@ def setalt(df):
             for a_name in a_names:
                 row['name'] = a_name
                 row['parent'] = parent_name
-                # i = len(df)
-                # print df_alt.shape, len(row)
-                # df_alt.loc[df_alt.index == len(df_alt)] = row[column_names]
                 df_alt.ix[i] = row[column_names]
                 i += 1
+
+    df_alt[~df_alt['name'].str.contains('/')]
     return df_alt
 
+
+def random_query(df):
+    """Return a sub-dataframe corresponding to a particular namefamily. 
+    Also return a sample placename from that namefamily"""
+    namekey = choice(name_rules.keys())
+    subdf = getfamdf(df, namekey)
+    placename = choice(subdf['name'])
+    return subdf, placename
+
+
+def placename_query(df, placestring):
+    """Attempt to match placestring to a city with a family pattern; 
+    return the matching sub-DataFrame and namekey if a match is made"""
+    # First try to query assuming that the user formatted the placename
+    # correctly
+    place = capwords(placestring).strip()
+    query = df['name'].str.contains(place)
+    if not query.any():
+        place = placestring.lower().strip()
+        query = df['name'].str.contains(place)
+    ##TODOTODOTODO
 
 if __name__ == "__main__":
     gbf = 'data/pristine/GB.txt'
