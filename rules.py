@@ -31,7 +31,7 @@ name_rules = {
     "cheapQchepPchippingA": ("(.*[cC]heap.*)", "(.*\s*Chep.*)", "(.*Chipping)"),
     "combeScwmPcoombeA": ("(.*\w+combe($|[\s+.*]))", "(.*\s*Cwm.*)", "(.*Coombe.*)"),
     "coedS": ("(.*\w+coed($|[\s+.*]))",),
-    "cotScottS": ("(.*\w+cot($|[\s+.*]))", "(.*\w+cott(($|[\s+.*]))"),
+    "cotScottS": ("(.*\w+cot($|[\s+.*]))", "(.*\w+cott($|[\s+.*]))"),
     "craigPcraigAcragPcragAcreagPcreagAgraigPgraigA": ("(.*\s*Craig.*)",
         "(.*Craig.*)", "(.*\s*Crag.*)", "(.*Crag.*)", "(.*\s*Creag.*)", "(.*Creag.*)", "(.*\s*Graig.*)", "(.*Graig.*)"),
     "culP": ("(.*\s*Cul.*)",),
