@@ -21,10 +21,13 @@ except IOError:
     pass
 
 
-def setgb(file_path):
+### Data setup ###
+def set_gb(file_path):
     """Read the GB.txt file from geonames and return an appropriately
     filtered DataFrame"""
-    gb = pd.read_table(file_path)
+    gb = pd.read_csv(file_path)
+    # Trim away an initial index column
+    gb = gb.ix[:, 1:20]
     column_names = ['geoid', 'name', 'asciiname', 'altname', 'lat', 'long',
         'feature_class', 'feature_code', 'country_code', 'cc2', 'adm1', 'adm2',
         'adm3', 'adm4', 'pop', 'elev', 'delev', 'timezone', 'moddate']
@@ -45,7 +48,7 @@ def setgb(file_path):
     return gb
 
 
-def setfam(dfin):
+def set_fam(dfin):
     """In-place setup name families for df dataframe.
 
     Note: this only acts on the 'name' field. Use another function to setup
@@ -71,53 +74,7 @@ def setfam(dfin):
     return df
 
 
-def patinls(slist, patlist):
-    """Search each string in slist for a substring instance defined by patlist;
-    return re.match if found, None if not found"""
-    found = None
-    try:
-        strings = iter(slist)
-    except TypeError:
-        return
-    for string in strings:
-        if not found:
-            for pat in patlist:
-                found = match(pat, string)
-                if found:
-                    break
-        else:
-            break
-    return found
-
-
-def patinstr(string, patlist):
-    """Search string for a substring instance defined by patlist; return
-    re.match if found, None if not found"""
-    found = None
-    if not isinstance(string, str):
-        return None
-    for pat in patlist:
-        found = match(pat, string)
-        if found:
-            break
-    return found
-
-
-def getfamdf(df, namekey):
-    """Get dataframe subset from df for rows belonging to the family
-    which is a sub"""
-    def _droidfind(listin):
-        result = None
-        try:
-            result = namekey in listin
-        except TypeError:
-            pass
-        return result if result is True else None
-    mask = df['ls_namefam'].map(lambda x: _droidfind(x))
-    return df[~mask.isnull()]
-
-
-def setalt(df, column_names=None):
+def set_alt(df, column_names=None):
     """DataFrame should only be the dataframe that
     comes after setgb if columns is left undefined; column_names is a list of
     column names that the resulting dataframe should contain. This list should
@@ -153,31 +110,6 @@ def setalt(df, column_names=None):
     return df_alt
 
 
-def random_query(df):
-    """Return a sub-dataframe corresponding to a particular namefamily. 
-    Also return a sample placename from that namefamily"""
-    namekey = choice(name_rules.keys())
-    subdf = getfamdf(df, namekey)
-    placename = choice(subdf['name'])
-    return subdf, placename
-
-
-def placename_query(df, placestring):
-    """Attempt to match placestring to a city with a family pattern; 
-    return the matching sub-DataFrame and namekey if a match is made"""
-    # First try to query assuming that the user formatted the placename
-    # correctly
-    place = capwords(placestring).strip()
-    query = df['name'].str.contains(place)
-    if not query.any():
-        place = placestring.lower().strip()
-        query = df['name'].str.contains(place)
-
-
-    return df[query]
-    ##TODOTODOTODO
-
-
 def append_nuts3_region(dfin, shapefile_path):
     """ Take a pandas dataframe with lat and long columns and a shapefile.
     Convert coordinates to Shapely points to do a point-in-polygon check
@@ -211,6 +143,93 @@ def append_2013_gva(dfin, csv_file_path):
         left_on='nuts3id',
         right_on='nuts3id')
     return df_gva
+
+
+### Helper Query Functions ###
+def patinls(slist, patlist):
+    """Search each string in slist for a substring instance defined by patlist;
+    return re.match if found, None if not found"""
+    found = None
+    try:
+        strings = iter(slist)
+    except TypeError:
+        return
+    for string in strings:
+        if not found:
+            for pat in patlist:
+                found = match(pat, string)
+                if found:
+                    break
+        else:
+            break
+    return found
+
+
+def patinstr(string, patlist):
+    """Search string for a substring instance defined by patlist; return
+    re.match if found, None if not found"""
+    found = None
+    if not isinstance(string, str):
+        return None
+    for pat in patlist:
+        found = match(pat, string)
+        if found:
+            break
+    return found
+
+
+### DataFrame Query Functions ###
+def get_fam(df, namekey):
+    """Get dataframe subset from df for rows belonging to the family
+    which is a sub"""
+    def _droidfind(listin):
+        result = None
+        try:
+            result = namekey in listin
+        except TypeError:
+            pass
+        return result if result is True else None
+    mask = df['ls_namefam'].map(lambda x: _droidfind(x))
+    return df[~mask.isnull()]
+
+
+def query_random(df):
+    """Return a sub-dataframe corresponding to a particular namefamily. 
+    Also return a sample placename from that namefamily"""
+    namekey = choice(name_rules.keys())
+    subdf = getfamdf(df, namekey)
+    placename = choice(subdf['name'])
+    return subdf, placename
+
+
+def query_placename(df, placestring):
+    """Attempt to match placestring to a city with a family pattern; 
+    return the matching sub-DataFrame, namekey, and full placename if a match
+    is made, else None
+
+    If there are multiple associated name families, then one will be
+    picked at random"""
+    # First try to query assuming that the user formatted the placename
+    # correctly, then try a looser search
+    place = capwords(placestring).strip()
+    query = df['name'].str.contains('.*' + place + '.*')
+    if not query.any():
+        place = placestring.lower().strip()
+        query = df['name'].str.contains('.*' + place + '.*')
+
+    # Return a dataframe row with the placename contained;
+    # assure that this row actually has a
+    try:
+        namefam_row = gb[query & (~gb['ls_namefam'].isnull())].sample()
+    except ValueError:
+        # In this case, there is no namefam_row match
+        return None
+
+    namekey = namefam_row['ls_namefam'].map(lambda x: sample(x, 1))
+    # An ugly way to get the string out
+    namekey = namekey.values[0][0]
+    placename = namefam_row['name']
+    return get_fam(df, namekey), namekey, placename.values[0]
 
 
 if __name__ == "__main__":
