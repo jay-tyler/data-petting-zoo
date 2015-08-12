@@ -170,7 +170,7 @@ def placename_query(df, placestring):
         query = df['name'].str.contains(place)
 
 
-    return df(query)
+    return df[query]
     ##TODOTODOTODO
 
 if __name__ == "__main__":
