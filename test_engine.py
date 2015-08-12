@@ -2,6 +2,8 @@
 import pytest
 from engine import patinls, patinstr, setgb, setfam, setalt
 import numpy as np
+import math
+
 
 
 def test_proper_columns():
@@ -84,20 +86,74 @@ def test_not_have_altname():
 
 def test_parent():
     df_head = setgb('data/pristine/GB.txt').head()
-    df_alt_head = setalt(setfam(df_head))
-    assert df_alt_head.ix[0, 'name'] == 'Zennor'
-    assert df_alt_head.ix[0, 'parent'] == 'nan'
-    assert df_alt_head.ix[0, 'name'] == 'Zennor'
-    assert df_alt_head.ix[0, 'parent'] == 'nan'
+    df_fam_head = setfam(df_head)
+    df_alt_head = setalt(df_fam_head)
+    last_alt_head = df_alt_head.ix[5:, :]
+    assert 'Zelah' not in last_alt_head
+    assert 'Ythsie' not in last_alt_head
 
-def test_not_parent():
-    df_head = setgb('data/pristine/GB.txt').head()
-    df_alt_head = setalt(setfam(df_head))
-    assert df_alt_head.ix[0, 'name'] == 'Zennor'
-    assert df_alt_head.ix[0, 'parent'] == 'nan'
 
-# def test_altname_in_parentname():
+# def test_parent():
 #     df_head = setgb('data/pristine/GB.txt').head()
-#     df_alt_head = setalt(setfam(df_head))
-#     assert 'Zelah' in df_alt_head['parent']
+#     df_fam_head = setfam(df_head)
+#     df_alt_head = setalt(df_fam_head)
+#     # first_alt_head = df_alt_head.ix[:5, :]
+#     last_alt_head = df_alt_head.ix[5:, :]
+#     for index_fam, row_fam in df_fam_head.iterrows():
+#         for index_alt, row_alt in df_fam_head.iterrows():
+#             if df_fam_head.ix[index_fam, 'altname']:
+#                 assert df_fam_head.ix[index_fam, 'name'] in last_alt_head.ix[index_alt, 'altname']
+#             else:
+#                 assert df_fam_head.ix[index_fam, 'name'] not in last_alt_head.ix[index_alt, 'altname']
+
+
+def test_alt_hasnot_parent():
+    df_head = setgb('data/pristine/GB.txt').head()
+    df_fam_head = setfam(df_head)
+    df_alt_head = setalt(df_fam_head)
+    for index, row in df_alt_head.iterrows():
+        for index in range(5):
+            assert math.isnan(df_alt_head.ix[index, 'parent'])
+
+
+# def test_alt_parent():
+#     # import ipdb; ipdb.set_trace()
+#     df_head = setgb('data/pristine/GB.txt').head()
+#     df_fam_head = setfam(df_head)
+#     df_alt_head = setalt(df_fam_head)
+#     assert df_alt_head.ix[0, 'name'] == 'Zennor'
+#     assert math.isnan(df_alt_head.ix[0, 'parent']) is True
+
+def test_alt_has_parent():
+    df_head = setgb('data/pristine/GB.txt').head()
+    df_fam_head = setfam(df_head)
+    df_alt_head = setalt(df_fam_head)
+    last_alt_head = df_alt_head.ix[5:, :]
+    for index, row in last_alt_head.iterrows():
+        assert len(last_alt_head.ix[index, 'parent']) > 0
+
+
+def test_alt_row():
+    # import ipdb; ipdb.set_trace()
+    df_head = setgb('data/pristine/GB.txt').head()
+    df_fam_head = setfam(df_head)
+    df_alt_head = setalt(df_fam_head)
+    assert df_alt_head.ix[0, 'name'] == df_fam_head.ix[0, 'name']
+    assert math.isnan(df_alt_head.ix[0, 'parent'])
+
+
+# def mlen(inlist):
+#     try:
+#         response = len(inlist)
+#     except TypeError:
+#         response = 0
+#     return response
+
+
+# def test_count_rows():
+#     df_head = setgb('data/pristine/GB.txt').head()
+#     df_fam_head = setfam(df_head)
+#     df_alt_head = setalt(df_fam_head)
+#     alt_names_count = df_fam_head['ls_altname'].map(lambda x: mlen(x))
+#     assert len(df_fam_head.index) + alt_names_count == len(df_alt_head.index)
 
