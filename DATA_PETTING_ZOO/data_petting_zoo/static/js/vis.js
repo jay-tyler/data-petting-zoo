@@ -63,7 +63,7 @@ var drawMap = function() {
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
         .attr("d", pZoo.mapObj.path);
-        plotCities();
+        plotPlace();
 };
 
 
@@ -89,24 +89,38 @@ var drawLabels = function() {
     }
 };
 
-var plotCities = function() {
-    d3.csv("/static/data/gb_noalt.csv", function(data) {
-        d3.select(".gb-map-content").select("svg").selectAll("circle")
-        .data(data)
+// var plotCities = function() {
+//     d3.csv("/static/data/gb_noalt.csv", function(data) {
+//         d3.select(".map-content").select("svg").selectAll("circle")
+//         .data(data)
+//         .enter()
+//         .append("circle")
+//         .attr("cx", function(d) {
+//             return pZoo.mapObj.projection([d['long'], d['lat']])[0];
+//         })
+//         .attr("cy", function(d) {
+//             return pZoo.mapObj.projection([d['long'], d['lat']])[1];
+//         })
+//         .attr("r", 1)
+//         .style("fill", "grey")
+//         .style("opacity", 0.75)
+//     });
+// };
+
+var plotPlace = function() {
+    d3.select(".map-content").select("svg").selectAll("circle")
+        .data([place])
         .enter()
         .append("circle")
         .attr("cx", function(d) {
-            return mapObject.projection([d['long'], d['lat']])[0];
+            return pZoo.mapObj.projection([d['long'], d['lat']])[0];
         })
         .attr("cy", function(d) {
-            return mapObject.projection([d['long'], d['lat']])[1];
+            return pZoo.mapObj.projection([d['long'], d['lat']])[1];
         })
-        .attr("r", 1)
-        .style("fill", "grey")
-        .style("opacity", 0.75)
-    });
+        .attr("r", 5)
+        .style("fill", "red")
 };
-
 
 var clearLabels = function() {
 
