@@ -43,7 +43,7 @@ var makeDefs = function(callback) {
 var createNewMapSVG = function(callback) {
 
     // create the SVG element that will hold the map
-    var svg = d3.select(".gb-map-content").append("svg")
+    var svg = d3.select(".map-content").append("svg")
         .attr("width", pZoo.mapObj.width)
         .attr("height", pZoo.mapObj.height);
 
@@ -56,7 +56,7 @@ var drawMap = function() {
     d3.select("body").select('svg').selectAll('.subunit')
         .data(
             topojson
-                .feature(pZoo.mapObjd.dat, pZoo.mapObj.dat.objects.subunits)
+                .feature(pZoo.mapObj.dat, pZoo.mapObj.dat.objects.subunits)
                 .features
         )
         .enter()
@@ -70,7 +70,7 @@ var drawLabels = function() {
 
     if ( $.isEmptyObject(pZoo.mapObj.dat) === false ) {
 
-        d3.select('gb-map-content').select('svg').selectAll(".subunit-label")
+        d3.select('map-content').select('svg').selectAll(".subunit-label")
             .data(
                 topojson
                 .feature(pZoo.mapObj.dat, pZoo.mapObj.dat.objects.subunits)
@@ -111,8 +111,8 @@ var loadPopData = function() {
 };
 
 
-var createNewHistoSVG = function() {
-    // var svg = d3.select(".histo-content").append("svg")
+var createNewPopSVG = function() {
+    // var svg = d3.select(".pop-content").append("svg")
     //     .attr("width", pZoo.width)
     //     .attr("height", 500);
 
@@ -120,7 +120,7 @@ var createNewHistoSVG = function() {
     pZoo.popObj.width = 760 - pZoo.popObj.margin.left - pZoo.popObj.margin.right;
     pZoo.popObj.height = 500 - pZoo.popObj.margin.top - pZoo.popObj.margin.bottom;
 
-    var svg = d3.select(".histo-content").append("svg")
+    var svg = d3.select(".pop-content").append("svg")
         .attr("width", pZoo.popObj.width + pZoo.popObj.margin.left + pZoo.popObj.margin.right)
         .attr("height", pZoo.popObj.height + pZoo.popObj.margin.top + pZoo.popObj.margin.bottom)
         .append("g")
@@ -147,7 +147,7 @@ var drawHisto = function() {
     var xAxis = d3.svg.axis()
         .ticks(thresholds);
 
-    var bar = d3.select('histo-content').select('svg').selectAll('.bar')
+    var bar = d3.select('pop-content').select('svg').selectAll('.bar')
         .data(data)
         .enter()
         .append('g')
@@ -165,7 +165,7 @@ var drawHisto = function() {
         .attr('text-anchor','middle')
         .text(function(d) { return d.pop; });
 
-    d3.select('histo-content').select('svg')
+    d3.select('pop-content').select('svg')
         .append('g')
         .attr('class', 'x axis')
         .attr('transform', 'translate(0' + 500 + ')')
@@ -198,7 +198,7 @@ var testHisto = function() {
         .scale(x)
         .orient("bottom");
 
-    var bar = d3.select('.histo-content').select('svg').selectAll(".bar")
+    var bar = d3.select('.pop-content').select('svg').selectAll(".bar")
         .data(data)
         .enter()
         .append("g")
@@ -217,7 +217,7 @@ var testHisto = function() {
         .attr("text-anchor", "middle")
         .text(function(d) { return formatCount(d.y); });
 
-    d3.select('.histo-content').select('svg').append("g")
+    d3.select('.pop-content').select('svg').append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + pZoo.popObj.height + ")")
         .call(xAxis);
@@ -241,5 +241,5 @@ $( document ).ready( function() {
 
     loadData();
 
-    loadHistoData();
+    loadPopData();
 });
