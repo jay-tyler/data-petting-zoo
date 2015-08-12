@@ -60,6 +60,8 @@ var drawMap = function() {
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
         .attr("d", mapObject.path);
+
+        plotCities();
 };
 
 
@@ -83,6 +85,24 @@ var drawLabels = function() {
             .attr("dy", ".35em")
             .text(function(d) { return d.properties.name; });
     }
+};
+
+var plotCities = function() {
+    d3.csv("/static/data/gb_noalt.csv", function(data) {
+        d3.select(".gb-map-content").select("svg").selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d) {
+            return mapObject.projection([d['long'], d['lat']])[0];
+        })
+        .attr("cy", function(d) {
+            return mapObject.projection([d['long'], d['lat']])[1];
+        })
+        .attr("r", 1)
+        .style("fill", "grey")
+        .style("opacity", 0.75)
+    });
 };
 
 
