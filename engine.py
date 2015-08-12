@@ -168,6 +168,9 @@ def placename_query(df, placestring):
     if not query.any():
         place = placestring.lower().strip()
         query = df['name'].str.contains(place)
+
+
+    return df(query)
     ##TODOTODOTODO
 
 if __name__ == "__main__":
