@@ -206,14 +206,16 @@ def get_fam(df, namekey):
 
 
 def query_random(df):
-    """Return a sub-dataframe corresponding to a particular namefamily. 
-    Also return a sample placename from that namefamily"""
+    """Return a (sub-dataframe, namekey, placename) corresponding to a
+    particular namefamily. Also return a sample placename from that
+    namefamily"""
     df = df.copy()
     namekeys = name_rules.keys()
     namekey = sample(namekeys, 1)[0]
     subdf = get_fam(df, namekey)
     placename = subdf['name'].sample().values[0]
     return subdf, namekey, placename
+
 
 def query_name(df, placestring):
     """Return a sub-DataFrame containing boolean matches to place name.
