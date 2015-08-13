@@ -299,8 +299,9 @@ def query_namefam_table(namekey):
         frag = wiki_codes.get(code.rstrip(',').lstrip())
         frag = frag if frag is not None else ""
         wiki_str += "{}, ".format(frag)
-    # Maybe refactor these iteratively later
-    for colname in ['wiki_codes', 'namekey', 'humandef', 'lan_notes', 'human_namekey']:
+    wiki_str = wiki_str.rstrip(", ")
+    toreturn['wiki_codes'] = wiki_str
+    for colname in ['namekey', 'humandef', 'lan_notes', 'human_namekey']:
         val = row[colname].values[0]
         if pd.isnull(val):
             val = None
