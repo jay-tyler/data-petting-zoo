@@ -23,10 +23,10 @@ except IOError:
     pass
 
 try:
-    NAMEFAM = pd.read_table("../../data/pickles")
+    NAMEFAM = pd.read_table("../data/namefam.tab")
 except IOError:
     # TODO: In this case should do a bunch of stuff to get gb into namespace
-    pass
+    print 'oh no'
 
 ### Setup Data Functions###
 def set_gb(file_path):
@@ -300,11 +300,16 @@ def query_namefam_table(namekey):
         frag = frag if frag is not None else ""
         wiki_str += "{}, ".format(frag)
     # Maybe refactor these iteratively later
-    toreturn['wiki_codes'] = wiki_str.rstrip(", ")
-    toreturn['namekey'] = row['namekey'].values[0]
-    toreturn['humandef'] = row['humandef'].values[0]
-    toreturn['lan_notes'] = row['lan_notes'].values[0]
-    toreturn['human_namekey'] = row['human_namekey'].values[0]
+    for colname in ['wiki_codes', 'namekey', 'humandef', 'lan_notes', 'human_namekey']:
+        val = row[colname].values[0]
+        if pd.isnull(val):
+            val = None
+        toreturn[colname] = val
+    # toreturn['wiki_codes'] = wiki_str.rstrip(", ")
+    # toreturn['namekey'] = row['namekey'].values[0]
+    # toreturn['humandef'] = row['humandef'].values[0]
+    # toreturn['lan_notes'] = row['lan_notes'].values[0]
+    # toreturn['human_namekey'] = row['human_namekey'].values[0]
     return toreturn
 
 
