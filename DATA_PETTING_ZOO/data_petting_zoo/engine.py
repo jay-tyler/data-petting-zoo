@@ -23,7 +23,7 @@ except IOError:
     pass
 
 try:
-    NAMEFAM = pd.read_table("../../data/pickles")
+    NAMEFAM = pd.read_table("../../data/namefam.tab")
 except IOError:
     # TODO: In this case should do a bunch of stuff to get gb into namespace
     pass
@@ -208,11 +208,12 @@ def get_fam(df, namekey):
 def query_random(df):
     """Return a sub-dataframe corresponding to a particular namefamily. 
     Also return a sample placename from that namefamily"""
-    namekey = sample(name_rules.keys())
+    df = df.copy()
+    namekeys = name_rules.keys()
+    namekey = sample(namekeys, 1)[0]
     subdf = get_fam(df, namekey)
-    placename = sample(subdf['name'])
-    return subdf, placename
-
+    placename = subdf['name'].sample().values[0]
+    return subdf, namekey, placename
 
 def query_name(df, placestring):
     """Return a sub-DataFrame containing boolean matches to place name.
@@ -237,6 +238,7 @@ def query_placename(df, placestring):
 
     If there are multiple associated name families, then one will be
     picked at random"""
+    df = df.copy()
     query = query_name(df, placestring)
     # Return a dataframe row with the placename contained;
     # assure that this row actually has a namefam associated
@@ -264,7 +266,7 @@ def query_name_or_fam(df, placestring):
     row as a DataFrame, None for namekey, and full placename
 
     Otherwise return None."""
-
+    df = df.copy()
     result = query_placename(df, placestring)
     if result is None:
         # Case of place with no namefam
