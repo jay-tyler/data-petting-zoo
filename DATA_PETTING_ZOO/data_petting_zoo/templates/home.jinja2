@@ -25,12 +25,14 @@
 
             <div class='map-heading'>
                 <h1>Great Britain</h1>
-                <button id='btn-add-labels'>Add Labels</button>
-                <button id='btn-clear-labels'>Clear Labels</button>
                 <form action="request.route_url('search', n" method="GET" id="search">
                     <input type="text" id="query"></input>
                     <input type="submit" value="Search"></input>
                 </form>
+                <div id="namefam-info-container">
+                    <h3 id="placename"></h3>
+                    <p id="namefam-info"></p>
+                </div>
             </div>
 
             <div class='map-content'>
