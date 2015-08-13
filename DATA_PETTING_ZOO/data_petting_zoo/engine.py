@@ -250,8 +250,3 @@ if __name__ == "__main__":
     gb2 = set_fam(gb)
 
     print gb2['ls_namefam'].dropna()
-
-
-# patlist = name_rules[namekey]
-# invmask = gb['ls_altname'].map(lambda x:patinls(x, patlist)).isnull()
-# return df[~invmask]
