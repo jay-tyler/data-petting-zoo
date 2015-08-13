@@ -59,5 +59,7 @@ target/
 # Engine related exclusions
 data
 scratchtest.py
-!data/namefam.csv
-
+data/exports
+data/pristine
+data/pickles
+data/sessions
