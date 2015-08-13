@@ -23,6 +23,7 @@ def main(global_config, **settings):
 
     config.add_route('home', '/')
     config.add_route('about', '/about')
+    config.add_route('place', '/place/{name}')
 
     config.scan()
 
