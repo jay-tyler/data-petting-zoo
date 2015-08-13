@@ -18,8 +18,6 @@ def home_view(request):
         name = request.matchdict['name']
     except KeyError:
         return {}
-    # namekey = ''.join(gb.loc[gb['name'] == name]['ls_namefam'].values[0])
-    # fam_df = getfamdf(gb, namekey)
 
     if 'HTTP_X_REQUESTED_WITH' in request.environ:
         fam_df, namekey, placename = query_placename(gb, name)
