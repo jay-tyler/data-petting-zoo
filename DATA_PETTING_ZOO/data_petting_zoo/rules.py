@@ -16,7 +16,7 @@ name_rules = {
     "benAbeinnQBeannQ": ("(.*Ben.*)", "(.*[bB]einn.*)", "(.*[bB]eann.*)"),
     "bergQberryS": ("(.*[bB]erg.*)", "(.*\w+berry($|[\s+.*]))"),
     "bexP": ("(.*\s*Bex.*)",),
-    "blenPblaenP": ("(.*\s*Blen.*)", "(.*\s*Blaen.*)"),
+    "blenPblaenP": ("(.*\s*Blen.*)", "(.*\s*Blaen.*)", "(.*\s*Blan.*)"),
     "bostS": ("(.*\w+bost($|[\s+.*]))",),
     "bournePbourneSburnS": ("(.*\s*Bourne.*)", "(.*\w+bourne($|[\s+.*]))", "(.*\w+burn($|[\s+.*]))"),
     "bradP": ("(.*\s*Brad.*)",),

@@ -1,6 +1,6 @@
 
 import pytest
-from engine import patinls, patinstr, set_gb, set_fam, set_alt
+from ..engine import patinls, patinstr, set_gb, set_fam, set_alt
 import numpy as np
 import math
 
@@ -10,14 +10,14 @@ def test_proper_columns():
     expected_columns = ['geoid', 'name', 'asciiname', 'altname', 'lat', 'long',
                         'feature_class', 'feature_code', 'country_code', 'cc2', 'adm1', 'adm2',
                         'adm3', 'adm4', 'pop', 'elev', 'delev', 'timezone', 'moddate']
-    proper_df = set_gb('data/pristine/NEWGB.csv')
+    proper_df = set_gb('../../../data/pristine/NEWGB.csv')
     for column_name in expected_columns:
         assert column_name in proper_df.columns
 
 
 def test_remove_extra():
     extra = ['05', '00', '01', 'NIR', '03']
-    proper_df = set_gb('data/pristine/NEWGB.csv')
+    proper_df = set_gb('../../../data/pristine/NEWGB.csv')
     for item in extra:
         for index, row in proper_df.iterrows():
             assert item not in row
@@ -66,26 +66,26 @@ def test_string_nan():
 
 
 def test_set_fam():
-    df_head = set_gb('data/pristine/NEWGB.csv').head()
+    df_head = set_gb('../../../data/pristine/NEWGB.csv').head()
     df_fam_head = set_fam(df_head)
     assert 'ls_namefam' in df_fam_head.columns
 
 
 def test_hasparent():
-    df_head = set_gb('data/pristine/NEWGB.csv').head()
+    df_head = set_gb('../../../data/pristine/NEWGB.csv').head()
     df_alt_head = set_alt(set_fam(df_head))
     assert 'parent' in df_alt_head.columns
 
 
 def test_not_have_altname():
-    df_head = set_gb('data/pristine/NEWGB.csv').head()
+    df_head = set_gb('../../../data/pristine/NEWGB.csv').head()
     df_alt_head = set_alt(set_fam(df_head))
     assert 'altname' not in df_alt_head.columns
     assert 'ls_altname' not in df_alt_head.columns
 
 
 def test_parent():
-    df_head = set_gb('data/pristine/NEWGB.csv').head()
+    df_head = set_gb('../../../data/pristine/NEWGB.csv').head()
     df_fam_head = set_fam(df_head)
     df_alt_head = set_alt(df_fam_head)
     last_alt_head = df_alt_head.ix[5:, :]
@@ -108,7 +108,7 @@ def test_parent():
 
 
 def test_alt_hasnot_parent():
-    df_head = set_gb('data/pristine/NEWGB.csv').head()
+    df_head = set_gb('/../../../data/pristine/NEWGB.csv').head()
     df_fam_head = set_fam(df_head)
     df_alt_head = set_alt(df_fam_head)
     for index, row in df_alt_head.iterrows():
@@ -125,7 +125,7 @@ def test_alt_hasnot_parent():
 #     assert math.isnan(df_alt_head.ix[0, 'parent']) is True
 
 def test_alt_has_parent():
-    df_head = set_gb('data/pristine/NEWGB.csv').head()
+    df_head = set_gb('/../../../data/pristine/NEWGB.csv').head()
     df_fam_head = set_fam(df_head)
     df_alt_head = set_alt(df_fam_head)
     last_alt_head = df_alt_head.ix[5:, :]
@@ -135,7 +135,7 @@ def test_alt_has_parent():
 
 def test_alt_row():
     # import ipdb; ipdb.set_trace()
-    df_head = set_gb('data/pristine/NEWGB.csv').head()
+    df_head = set_gb('/../../../data/pristine/NEWGB.csv').head()
     df_fam_head = set_fam(df_head)
     df_alt_head = set_alt(df_fam_head)
     assert df_alt_head.ix[0, 'name'] == df_fam_head.ix[0, 'name']
