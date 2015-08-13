@@ -138,6 +138,7 @@ var drawLabels = function() {
 
 var plotFamily = function(response) {
     d3.select(".map-content").select("svg").selectAll("circle")
+        .remove()
         .data($.parseJSON(response))
         .enter()
         .append("circle")
