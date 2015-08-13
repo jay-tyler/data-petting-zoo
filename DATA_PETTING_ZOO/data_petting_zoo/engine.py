@@ -8,7 +8,7 @@ import fiona
 from shapely.geometry import Point, asShape
 from shapely.prepared import prep
 from shapely import speedups
-from rules import name_rules, geofeat_rules
+from rules import name_rules, geofeat_rules, wiki_codes
 
 DATA_ROOT = "" # TODO: wire this up
 
@@ -17,13 +17,16 @@ pd.set_option('mode.chained_assignment', 'warn')
 
 # Imports of needed data
 try:
-    gb = pd.read_pickle("../../data/pickles/gb.pk1")
+    GB = pd.read_pickle("../../data/pickles/gb.pk1")
 except IOError:
     # TODO: In this case should do a bunch of stuff to get gb into namespace
     pass
 
 try:
-    namefam = pd.read_table("../../data/pickles")
+    NAMEFAM = pd.read_table("../../data/pickles")
+except IOError:
+    # TODO: In this case should do a bunch of stuff to get gb into namespace
+    pass
 
 ### Setup Data Functions###
 def set_gb(file_path):
@@ -284,7 +287,25 @@ def query_pop_slice(df, popthresh):
 def query_namefam_table(namekey):
     """Return a dictionary containing strings of all of the elements of
     a namefam table in human readable string format"""
-    row = 
+    row = NAMEFAM[NAMEFAM['namekey'] == namekey]
+    if row.shape[0] == 0:
+    # Case of asking for a namekey that doesn't exist
+        return None
+    toreturn = dict()
+
+    # Turning wiki_code characters into a human readable string
+    wiki_str = ""
+    for code in row['wiki_codes'].values[0].split():
+        frag = wiki_codes.get(code.rstrip(',').lstrip())
+        frag = frag if frag is not None else ""
+        wiki_str += "{}, ".format(frag)
+    # Maybe refactor these iteratively later
+    toreturn['wiki_codes'] = wiki_str.rstrip(", ")
+    toreturn['namekey'] = row['namekey'].values[0]
+    toreturn['humandef'] = row['humandef'].values[0]
+    toreturn['lan_notes'] = row['lan_notes'].values[0]
+    toreturn['human_namekey'] = row['human_namekey'].values[0]
+    return toreturn
 
 
 if __name__ == "__main__":
