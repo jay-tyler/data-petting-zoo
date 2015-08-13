@@ -163,7 +163,7 @@ var plotFamily = function(response) {
     d3.select('.map-content').selectAll('circle').remove();
 
     d3.select(".map-content").select("svg").selectAll("circle")
-        .data($.parseJSON(response))
+        .data(response['fam_df'])
         .enter()
         .append("circle")
         .attr("cx", function(d) {
@@ -320,10 +320,13 @@ var initialSearch = function() {
 
     $.ajax({
         type: "GET",
+        dataType: 'json',
         url: "/search/ashley",
     }).done(function(response) {
         plotFamily(response);
         drawPopHisto(response);
+    }).fail(function(a,b,c) {
+        alert('foo');
     });
 
 };
@@ -340,10 +343,14 @@ $( document ).ready( function() {
 
         $.ajax({
             type: "GET",
+            dataType: 'json',
             url: "/search/" + $("#query").val(),
         }).done(function(response) {
+            // console.log(response)
             plotFamily(response);
             drawPopHisto(response);
+        }).fail(function(a,b,c) {
+            alert('foo');
         });
 
     });
