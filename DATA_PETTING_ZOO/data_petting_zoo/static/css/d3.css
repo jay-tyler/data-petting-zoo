@@ -1,0 +1,15 @@
+svg {
+    pointer-events: none;
+}
+
+.subunit.SCT { fill: #ddc; }
+.subunit.WLS { fill: #cdd; }
+.subunit.ENG { fill: #dcd; }
+
+.country-label {
+  fill: #777;
+  fill-opacity: .5;
+  font-size: 20px;
+  font-weight: 300;
+  text-anchor: middle;
+}
