@@ -40,11 +40,11 @@ name_rules = {
     "dalP": ("(.*\s*Dal.*)",),
     "daleS": ("(.*\w+dale($|[\s+.*]))",),
     "deanSdeanAdenSdonS": ("(.*\w+dean($|[\s+.*]))", "(.*Dean)", "(.*\w+don($|[\s+.*]))", "(.*\w+den($|[\s+.*]))"),
-    "dinPdinasA": ("(.*\s*Din.*)", "(.*Dinas.*)"),
+    "dinPdinasPdinasA": ("(.*\s*Din.*)", "(.*Dinas.*)"),
     "dolPdullA": ("(.*\s*Dol.*)", "(.*Dull.*)"),
     "donSdenS": ("(.*\w+don($|[\s+.*]))", "(.*\w+den($|[\s+.*]))"),
     "drumP": ("(.*\s*Drum.*)",),
-    "dubhAdowQdhuQduffQ": ("(.*Dubh.*)", "(.*[Dd]ow.*)", "(.*[Dd]hu.*)", "(.*[Dd]uff.*)"),
+    "dubhSdubhPdubhAdowQdhuQduffQ": ("(.*Dubh.*)", "(.*[Dd]ow.*)", "(.*[Dd]hu.*)", "(.*[Dd]uff.*)"),
     "dunPdumPdonPdouneP": ("(.*\s*Dun.*)", "(.*\s*Dum.*)", "(.*\s*Don.*)", "(.*\s*Doune.*)"),
     "eaglesPeglosPeglewsPecclesP": ("(.*\s*Eagles.*)", "(.*\s*Eglos.*)", "(.*\s*Eccle.*)", "(.*\s*Eglews.*)"),
     "eilianA": ("(.*Eilian)",),
@@ -60,7 +60,7 @@ name_rules = {
     "garPgartP": ("(.*\s*Gar.*)", "(.*\s*Gart.*)"),
     "garthS": ("(.*\w+garth($|[\s+.*]))",),
     "gateAgateS": ("(.*Gate)", "(.*\w+gate($|[\s+.*]))"),
-    "gillPgillSghyllPghyllS": ("(.*\s*Gill.*)", "(.*\w+gill($|[\s+.*]))", "(.*\s*Ghyll.*)", "(.*\w+ghyll($|[\s+.*]))"),
+    "gillPgillSghyllPghyllA": ("(.*\s*Gill.*)", "(.*\w+gill($|[\s+.*]))", "(.*\s*Ghyll.*)", "(.*\w+ghyll($|[\s+.*]))"),
     "glenPglenSglenA": ("(.*\s*Glen.*)", "(.*\w+glen($|[\s+.*]))", "(.*Glen.*)"),
     "gowtA": ("(.*Gowt.*)",),
     "hamS": ("(.*\w+ham($|[\s+.*]))",),
@@ -130,7 +130,7 @@ name_rules = {
     "toftS": ("(.*\w+toft($|[\s+.*]))",),
     "treP": ("(.*\s*Tre.*)",),
     "treathQdreathS": ("(.*[Tt]reath.*)", "(.*\w+dreath($|[\s+.*]))",),
-    "tunPtunStonSonI": ("(.*\s*tun.*)", "(.*\w+tun($|[\s+.*]))", "(.*\w+ton($|[\s+.*]))", "(.+on.+)"),
+    "tunPtunStonStonI": ("(.*\s*tun.*)", "(.*\w+tun($|[\s+.*]))", "(.*\w+ton($|[\s+.*]))", "(.+ton.+)"),
     "uponI": ("(.+upon.+)",),
     "wealdPwoldS": ("(.*\s*Weald.*)", "(.*\w+wold($|[\s+.*]))"),
     "whelP": ("(.*\s*whel.*)",),
@@ -145,6 +145,7 @@ name_rules = {
 # Pick only feature codes that correspond to towns and cities, see
 # http://www.geonames.org/export/codes.html
 geofeat_rules = ("PPL", "PPLA", "PPLA2", "PPLA3", "PPLA4", "PPLC", "PPLCH",
+<<<<<<< HEAD
     "PPLF", "PPLG", "PPLH", "PPLL", "PPLQ", "PPLR", "PPLS", "PPLW")
 
 
@@ -164,3 +165,6 @@ wiki_codes = {
     'SG': 'Scots Gaelic',
     'W': 'Welsh'
 }
+=======
+    "PPLF", "PPLG", "PPLH", "PPLL", "PPLQ", "PPLR", "PPLS", "PPLW")
+>>>>>>> 78a4fa84ad2b00c50c5a68bead58ef296a205ada

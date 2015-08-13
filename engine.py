@@ -110,7 +110,7 @@ def set_alt(df, column_names=None):
     return df_alt
 
 
-def set_namfam_table(file_path):
+def set_namefam_table(file_path):
     """Read the namfam csv file and load to a table"""
     return pd.read_csv(file_path)
 
@@ -201,9 +201,9 @@ def get_fam(df, namekey):
 def query_random(df):
     """Return a sub-dataframe corresponding to a particular namefamily. 
     Also return a sample placename from that namefamily"""
-    namekey = choice(name_rules.keys())
+    namekey = sample(name_rules.keys())
     subdf = get_fam(df, namekey)
-    placename = choice(subdf['name'])
+    placename = sample(subdf['name'])
     return subdf, placename
 
 
