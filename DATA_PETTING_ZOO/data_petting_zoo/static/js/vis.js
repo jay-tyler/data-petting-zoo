@@ -65,7 +65,7 @@ var drawMap = function() {
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
         .attr("d", pZoo.mapObj.path)
-    plotPlace();
+    // plotPlace();
 };
 
 var drawLabels = function() {
@@ -108,33 +108,33 @@ var drawLabels = function() {
 //     });
 // };
 
-var plotPlace = function() {
-    d3.select(".map-content").select("svg").selectAll("circle")
-        .data([place])
-        .enter()
-        .append("circle")
-        .attr("cx", function(d) {
-            return pZoo.mapObj.projection([d['long'], d['lat']])[0];
-        })
-        .attr("cy", function(d) {
-            return pZoo.mapObj.projection([d['long'], d['lat']])[1];
-        })
-        .attr("r", 5)
-        .style("fill", "grey")
-        .on("mouseover", function(d) { 
-            div.transition()        
-                .duration(100)      
-                .style("opacity", .9);      
-            div.html(d['name'])  
-                .style("left", (d3.event.pageX) + "px")     
-                .style("top", (d3.event.pageY - 28) + "px");    
-            })                  
-        .on("mouseout", function(d) {       
-            div.transition()        
-                .duration(500)      
-                .style("opacity", 0);   
-        });
-};
+// var plotPlace = function() {
+//     d3.select(".map-content").select("svg").selectAll("circle")
+//         .data([place])
+//         .enter()
+//         .append("circle")
+//         .attr("cx", function(d) {
+//             return pZoo.mapObj.projection([d['long'], d['lat']])[0];
+//         })
+//         .attr("cy", function(d) {
+//             return pZoo.mapObj.projection([d['long'], d['lat']])[1];
+//         })
+//         .attr("r", 5)
+//         .style("fill", "grey")
+//         .on("mouseover", function(d) { 
+//             div.transition()        
+//                 .duration(100)      
+//                 .style("opacity", .9);      
+//             div.html(d['name'])  
+//                 .style("left", (d3.event.pageX) + "px")     
+//                 .style("top", (d3.event.pageY - 28) + "px");    
+//             })                  
+//         .on("mouseout", function(d) {       
+//             div.transition()        
+//                 .duration(500)      
+//                 .style("opacity", 0);   
+//         });
+// };
 
 var clearLabels = function() {
 
@@ -255,4 +255,16 @@ $( document ).ready( function() {
     loadMapData();
 
     loadPopData();
+
+    $('#search').submit(function(e) {
+        e.preventDefault();
+        // console.log($("#query").val());
+
+        $.ajax({
+            type: "GET",
+            url: "/search/" + $("#query").val()
+        }).done(function(response) {
+            console.log(response)
+        });
+    });
 });
