@@ -8,16 +8,16 @@ tweaks, etc.
 
 These functions include:
 
-* setgb(file_path) --> DataFrame: file_path is path to GB.txt geonames
+* set_gb(file_path) --> DataFrame: file_path is path to GB.txt geonames
 
 This function reads the GB.txt dataset from file_path and returns a dataframe
 after applying filters for adm1 regions and geofeatures.
 
-* setalt(DataFrame, column_names=None) --> DataFrame: DataFrame should only be the dataframe that
+* set_alt(DataFrame, column_names=None) --> DataFrame: DataFrame should only be the dataframe that
 comes after setgb if columns is left undefined; columns is a list of column names that
 the resulting dataframe should contain. This list should include 'parent.'
 
-* setfam(DataFrame) --> DataFrame: DataFrame can be any with a 'name' column
+* set_fam(DataFrame) --> DataFrame: DataFrame can be any with a 'name' column
 
 This function applies the regexes from name_rules and establishes an 'ls_namefam'
 column which contains a Python list containing 'namekey's for applying to the
@@ -35,11 +35,18 @@ string object and patlist is any iterable containing valid regex strings.
 This function searches string for any regex match definied by the iterable
 patlist. Handling for np.nan is provided (returning None).
 
-* getfamdf(DataFrame, namekey) --> DataFrame: DataFrame input can be any
+* get_fam(DataFrame, namekey) --> DataFrame: DataFrame input can be any
 dataframe that contains an 'ls_namefam' column; namekey should be one of
 the namekeys defined as a key in name_rules.
 The returned DataFrame will be a sub-DataFrame containing rows with instances
 of namekey in 'ls_namefam.'
+
+* query_placename(DataFrame, placestring) --> DataFrame, namekey, placename. Input should be any
+dataframe that contains 'ls_namefame' and 'name' columns, and placestring
+is user input (or otherwise) that putatively corresponds to an actual named
+place in the UK; query_placename will attempt to find a place (or something close)
+and will return the corresponding sub-DataFrame corresponding to the namefamily
+as well as a namekey indicating that family.
 
 #Description of geonames columns
 
