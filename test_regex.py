@@ -4,15 +4,19 @@ import pytest
 
 
 def test_aberP():
-    import ipdb; ipdb.set_trace()
+    # import ipdb; ipdb.set_trace()
     found = []
     strings = ['rat', 'mouse', 'Aberystwyth', 'Aberdyfi', 'Aberdeen', 'Abergavenny', 'Aberuthven']
     for string in strings:
         for regex in name_rules['aberP']:
-            found.append(match(regex, string).group())
+            m = match(regex, string)
+            if m is not None:
+                found.append(match(regex, string).group())
         return found
     print found
     assert found == ['rat']
+    assert found is None
+    assert found is True
     # assert found == ['Aberystwyth', 'Aberdyfi', 'Aberdeen', 'Abergavenny', 'Aberuthven']
 
 
@@ -22,8 +26,8 @@ def test_not_aberP():
     strings = ['rat', 'mouse']
     for string in strings:
         for regex in name_rules['aberP']:
-            if match(regex, string) is not None:
-                m = match(regex, string)
+            m = match(regex, string)
+            if m is not None:
                 found.append(match(regex, string).group())
                 assert m.group() == string
             else:
@@ -38,8 +42,10 @@ def test_bergQberryS():
     strings = ['cheese', 'echidna', 'Blencathra', 'Blencogo', 'Blaenau Ffestiniog', 'Blantyre']
     for string in strings:
         for regex in name_rules['aberP']:
-            if match(regex, string):
-                found.append(match(regex, string).group())
+            m = match(regex, string)
+            # import pdb; pdb.set_trace()
+            if m is not None:
+                found.append(m.group())
             else:
                 return 'No match'
         return found
