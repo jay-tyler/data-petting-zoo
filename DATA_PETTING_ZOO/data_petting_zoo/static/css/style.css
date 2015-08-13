@@ -59,12 +59,17 @@ Body
 ********************************/
 
 #body-container {
-    width: 80%;
+    width: 60%;
+    margin-top: 100px;
     margin-left: 0;
     float: left;
 }
 
-.gb-map-heading {
+#body-container > * {
+    margin-bottom: 80px;
+}
+
+.map-heading {
     clear: both;
     margin-bottom: 20px;
 }
