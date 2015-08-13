@@ -80,8 +80,6 @@ var drawMap = function() {
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
         .attr("d", pZoo.mapObj.path);
-
-    plotPlace();
 };
 
 
@@ -127,9 +125,39 @@ var drawLabels = function() {
 // };
 
 
-var plotPlace = function() {
+// var plotPlace = function() {
+//     d3.select(".map-content").select("svg").selectAll("circle")
+//         .data([place])
+//         .enter()
+//         .append("circle")
+//         .attr("cx", function(d) {
+//             return pZoo.mapObj.projection([d['long'], d['lat']])[0];
+//         })
+//         .attr("cy", function(d) {
+//             return pZoo.mapObj.projection([d['long'], d['lat']])[1];
+//         })
+//         .attr("r", 5)
+//         .style("fill", "grey")
+//         .on("mouseover", function(d)
+//             div.transition()
+//                 .duration(100)
+//                 .style("opacity", .9);
+//             div.html(d['name'])
+//                 .style("left", (d3.event.pageX) + "px")
+//                 .style("top", (d3.event.pageY - 28) + "px");
+//             })
+//         .on("mouseout", function(d) {
+//             div.transition()
+//                 .duration(500)
+//                 .style("opacity", 0);
+//         });
+// };
+
+var plotFamily = function(response) {
+
     d3.select(".map-content").select("svg").selectAll("circle")
-        .data([place])
+        .remove()
+        .data($.parseJSON(response))
         .enter()
         .append("circle")
         .attr("cx", function(d) {
@@ -138,7 +166,7 @@ var plotPlace = function() {
         .attr("cy", function(d) {
             return pZoo.mapObj.projection([d.long, d.lat])[1];
         })
-        .attr("r", 5)
+        .attr("r", 4)
         .style("fill", "grey")
         .on("mouseover", function(d) {
             div.transition()
@@ -283,4 +311,15 @@ $( document ).ready( function() {
     loadMapData();
 
     loadPopData();
+
+    $('#search').submit(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: "GET",
+            url: "/search/" + $("#query").val(),
+        }).done(function(response) {
+            plotFamily(response);
+        });
+    });
 });
