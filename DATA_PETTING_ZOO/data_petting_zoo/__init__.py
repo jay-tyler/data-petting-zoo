@@ -1,10 +1,12 @@
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
-
+# from . import engine, models, rules, views
 from .models import (
     DBSession,
     Base,
 )
+
+__all__ = ['engine', 'models', 'rules', 'views']
 
 
 def main(global_config, **settings):
