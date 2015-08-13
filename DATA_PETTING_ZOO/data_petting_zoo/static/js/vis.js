@@ -4,6 +4,9 @@ var pZoo = {
 };
 
 
+// part of on-page-load setup;
+// reads data from json file, stores it in pZoo.mapObj namespace
+// THIS -> makeDefs()
 var loadMapData = function() {
 
     d3.json("/static/js/project_shapefiles/uk.json", function(error, uk) {
@@ -17,6 +20,9 @@ var loadMapData = function() {
 };
 
 
+// part of on-page-load setup;
+// creates variables used in map vis, stores in pZoo.mapObj namespace
+// loadMapData() -> THIS -> createNewMapSVG()
 var makeDefs = function() {
 
     pZoo.mapObj.width = 760;
@@ -39,10 +45,15 @@ var makeDefs = function() {
     createNewMapSVG();
 };
 
-var div = d3.select("body").append("div")   
-    .attr("class", "tooltip")               
+
+var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
     .style("opacity", 0);
 
+
+// part of on-page-load setup;
+// creates the SVG HTML element that will be the target for drawing
+// makeDefs() -> THIS -> drawMap()
 var createNewMapSVG = function() {
 
     // create the SVG element that will hold the map
@@ -53,6 +64,10 @@ var createNewMapSVG = function() {
     drawMap();
 };
 
+
+// part of on-page-load setup;
+// draws map shapes
+// createNewMapSVG -> THIS -> drawLabels()
 var drawMap = function() {
 
     d3.select("body").select('svg').selectAll('.subunit')
@@ -64,10 +79,15 @@ var drawMap = function() {
         .enter()
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
-        .attr("d", pZoo.mapObj.path)
-    plotPlace();
+        .attr("d", pZoo.mapObj.path);
+
+    drawLabels();
 };
 
+
+// part of on-page-load setup;
+// draws map shapes
+// drawMap() -> THIS
 var drawLabels = function() {
 
     if ( $.isEmptyObject(pZoo.mapObj.dat) === false ) {
@@ -90,6 +110,7 @@ var drawLabels = function() {
     }
 };
 
+
 // var plotCities = function() {
 //     d3.csv("/static/data/gb_noalt.csv", function(data) {
 //         d3.select(".map-content").select("svg").selectAll("circle")
@@ -108,33 +129,66 @@ var drawLabels = function() {
 //     });
 // };
 
-var plotPlace = function() {
+
+// var plotPlace = function() {
+//     d3.select(".map-content").select("svg").selectAll("circle")
+//         .data([place])
+//         .enter()
+//         .append("circle")
+//         .attr("cx", function(d) {
+//             return pZoo.mapObj.projection([d['long'], d['lat']])[0];
+//         })
+//         .attr("cy", function(d) {
+//             return pZoo.mapObj.projection([d['long'], d['lat']])[1];
+//         })
+//         .attr("r", 5)
+//         .style("fill", "grey")
+//         .on("mouseover", function(d)
+//             div.transition()
+//                 .duration(100)
+//                 .style("opacity", .9);
+//             div.html(d['name'])
+//                 .style("left", (d3.event.pageX) + "px")
+//                 .style("top", (d3.event.pageY - 28) + "px");
+//             })
+//         .on("mouseout", function(d) {
+//             div.transition()
+//                 .duration(500)
+//                 .style("opacity", 0);
+//         });
+// };
+
+var plotFamily = function(response) {
+
+    d3.select('.map-content').selectAll('circle').remove();
+
     d3.select(".map-content").select("svg").selectAll("circle")
-        .data([place])
+        .data($.parseJSON(response))
         .enter()
         .append("circle")
         .attr("cx", function(d) {
-            return pZoo.mapObj.projection([d['long'], d['lat']])[0];
+            return pZoo.mapObj.projection([d.long, d.lat])[0];
         })
         .attr("cy", function(d) {
-            return pZoo.mapObj.projection([d['long'], d['lat']])[1];
+            return pZoo.mapObj.projection([d.long, d.lat])[1];
         })
-        .attr("r", 5)
+        .attr("r", 4)
         .style("fill", "grey")
-        .on("mouseover", function(d) { 
-            div.transition()        
-                .duration(100)      
-                .style("opacity", .9);      
-            div.html(d['name'])  
-                .style("left", (d3.event.pageX) + "px")     
-                .style("top", (d3.event.pageY - 28) + "px");    
-            })                  
-        .on("mouseout", function(d) {       
-            div.transition()        
-                .duration(500)      
-                .style("opacity", 0);   
+        .on("mouseover", function(d) {
+            div.transition()
+                .duration(100)
+                .style("opacity", 0.9);
+            div.html(d.name)
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+            })
+        .on("mouseout", function(d) {
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
         });
 };
+
 
 var clearLabels = function() {
 
@@ -145,6 +199,9 @@ var clearLabels = function() {
 };
 
 
+// part of on-page-load setup;
+// reads data from json file, stores it in pZoo.popObj namespace
+// THIS -> createNewPopSVG()
 var loadPopData = function() {
 
     d3.json("/static/js/histogram/acPaccPockS.json", function(error, aberP) {
@@ -158,10 +215,11 @@ var loadPopData = function() {
 };
 
 
+// part of on-page-load setup;
+// defines some vars to be stored in pZoo.popObj namespace;
+// creates SVG HTML element to be targeted by draw functions
+// loadPopData() -> THIS -> drawPopHisto()
 var createNewPopSVG = function() {
-    // var svg = d3.select(".pop-content").append("svg")
-    //     .attr("width", pZoo.width)
-    //     .attr("height", 500);
 
     pZoo.popObj.margin = {top: 10, right: 30, bottom: 30, left: 30};
     pZoo.popObj.width = 760 - pZoo.popObj.margin.left - pZoo.popObj.margin.right;
@@ -173,14 +231,22 @@ var createNewPopSVG = function() {
         .append("g")
         .attr("transform", "translate(" + pZoo.popObj.margin.left + "," + pZoo.popObj.margin.top + ")");
 
-    drawPopHisto();
+    // drawPopHisto();
 };
 
 
-var drawPopHisto = function() {
+var drawPopHisto = function(response) {
+
+    // remove old display contents
+    d3.select('.pop-content').selectAll('.bar').remove();
+    d3.select('.pop-content').selectAll('text').remove();
+
+    pZoo.popObj.response = response;
 
     // configure data
-    var origVals = d3.values(pZoo.popObj.dat.pop);
+    var parsed = $.parseJSON(response);
+    var origVals = [];
+    for (i = 0; i < parsed.length; i++) { origVals.push(parsed[i].pop); }
     var thresholds = [0, 1, 1000, 2000, 5000, 10000, 100000, 200000];
     var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
@@ -200,7 +266,8 @@ var drawPopHisto = function() {
         .scale(xScale)
         .orient('bottom');
 
-    // NOW GRAPH!
+    // DRAW, PILGRIM!
+    // draw the 'bar' elements
     var bar = d3.select('.pop-content').select('svg').selectAll('.bar')
         .data(binnedVals)
         .enter()
@@ -208,29 +275,32 @@ var drawPopHisto = function() {
         .attr('class', 'bar')
         .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
 
+    // draw the rectangles - these are the actual visualization bits
     bar.append('rect')
+
         // .attr('x', '10')
         // Not sure how to leverage this x-offset; I've managed to produce no noticeable results
 
-        // .attr('width', pZoo.popObj.width / binnedVals.length)
         .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
         .attr('width', xScale.rangeBand())
         .attr('height', function(d) { return yScale(d.y); });
 
-    // graph the axes
+    // draw the axes
     d3.select('.pop-content').select('svg')
         .append('g')
         .attr('class', 'x axis')
         .attr('transform', 'translate(' + xScale.rangeBand() / 1.6 + ', ' + pZoo.popObj.height + ')')
         .call(xAxis);
 
-    // configure and graph text
+    // configure and draw text labels
     var formatCount = d3.format(",.0f");
     bar.append("text")
         .attr("dy", ".75em")
-        // .attr("y", 6)
         .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
+
         // .attr("x", function(d) { return d[0] / 2; })
+        // again, still not sure how to leverage this x-offset yet
+
         .attr('transform', function(d) { return 'translate(' + xScale.rangeBand() / 2 + ', 0)'; })
         .attr("text-anchor", "middle")
         .text(function(d) { return formatCount(d.y); });
@@ -246,13 +316,35 @@ var createSliders = function() {
 };
 
 
+var initialSearch = function() {
+
+    $.ajax({
+        type: "GET",
+        url: "/search/ashley",
+    }).done(function(response) {
+        plotFamily(response);
+        drawPopHisto(response);
+    });
+
+};
+
+
 $( document ).ready( function() {
 
-    $( '#btn-add-labels' ).click( function(event) { drawLabels(); });
-
-    $( '#btn-clear-labels' ).click( function(event) { clearLabels(); });
-
     loadMapData();
+    createNewPopSVG();
+    initialSearch();
 
-    loadPopData();
+    $('#search').submit(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: "GET",
+            url: "/search/" + $("#query").val(),
+        }).done(function(response) {
+            plotFamily(response);
+            drawPopHisto(response);
+        });
+
+    });
 });
