@@ -23,7 +23,7 @@ except IOError:
     pass
 
 try:
-    NAMEFAM = pd.read_table("../../data/pickles")
+    NAMEFAM = pd.read_table("../../data/namefam.tab")
 except IOError:
     # TODO: In this case should do a bunch of stuff to get gb into namespace
     pass

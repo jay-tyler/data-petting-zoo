@@ -1,5 +1,5 @@
 from re import match
-from .data_petting_zoo.rules import name_rules
+from ..rules import name_rules
 import pytest
 
 
