@@ -10,16 +10,20 @@ from shapely.prepared import prep
 from shapely import speedups
 from rules import name_rules, geofeat_rules
 
+DATA_ROOT = "" # TODO: wire this up
+
 # Warn if a value is being assigned to a copy
 pd.set_option('mode.chained_assignment', 'warn')
 
 # Imports of needed data
 try:
-    gb = pd.read_pickle("data/pickles/gb.pk1")
+    gb = pd.read_pickle("../../data/pickles/gb.pk1")
 except IOError:
     # TODO: In this case should do a bunch of stuff to get gb into namespace
     pass
 
+try:
+    namefam = pd.read_table("../../data/pickles")
 
 ### Setup Data Functions###
 def set_gb(file_path):
@@ -207,13 +211,12 @@ def query_random(df):
     return subdf, placename
 
 
-def query_placename(df, placestring):
-    """Attempt to match placestring to a city with a family pattern; 
-    return the matching sub-DataFrame, namekey, and full placename if a match
-    is made, else None
+def query_name(df, placestring):
+    """Return a sub-DataFrame containing boolean matches to place name.
 
-    If there are multiple associated name families, then one will be
-    picked at random"""
+    This is intended as a Helper function. Will attempt a more literal
+    match, and if this fails, will try a loose match.
+    """
     # First try to query assuming that the user formatted the placename
     # correctly, then try a looser search
     place = capwords(placestring).strip()
@@ -221,9 +224,19 @@ def query_placename(df, placestring):
     if not query.any():
         place = placestring.lower().strip()
         query = df['name'].str.contains('.*' + place + '.*')
+    return query
 
+
+def query_placename(df, placestring):
+    """Attempt to match placestring to a city with a family pattern; 
+    return the matching sub-DataFrame, namekey, and full placename if a match
+    is made, else None
+
+    If there are multiple associated name families, then one will be
+    picked at random"""
+    query = query_name(df, placestring)
     # Return a dataframe row with the placename contained;
-    # assure that this row actually has a
+    # assure that this row actually has a namefam associated
     try:
         namefam_row = df[query & (~df['ls_namefam'].isnull())].sample()
     except ValueError:
@@ -237,11 +250,41 @@ def query_placename(df, placestring):
     return get_fam(df, namekey), namekey, placename.values[0]
 
 
+def query_name_or_fam(df, placestring):
+    """Attempt to match placestring to a city with a family pattern; else
+    attempt to find a place of the same name. Return None otherwise.
+
+    If namefamily is found: return the matching sub-DataFrame, namekey,
+    and full placenameif a match
+
+    If namefamily is not found, but placename is: return the singular placename
+    row as a DataFrame, None for namekey, and full placename
+
+    Otherwise return None."""
+
+    result = query_placename(df, placestring)
+    if result is None:
+        # Case of place with no namefam
+        query = query_name(df, placestring)
+        try:
+            row = df[query].sample()
+            result = row, None, row['name'].values[0]
+        except ValueError:
+            result = None
+    return result
+
+
 def query_pop_slice(df, popthresh):
     """Return a sub-DataFrame from DataFrame df that excludes all population
     values below the threshold"""
 
     return df[df['pop'] >= popthresh]
+
+
+def query_namefam_table(namekey):
+    """Return a dictionary containing strings of all of the elements of
+    a namefam table in human readable string format"""
+    row = 
 
 
 if __name__ == "__main__":
