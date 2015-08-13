@@ -225,7 +225,7 @@ def query_placename(df, placestring):
     # Return a dataframe row with the placename contained;
     # assure that this row actually has a
     try:
-        namefam_row = gb[query & (~gb['ls_namefam'].isnull())].sample()
+        namefam_row = df[query & (~df['ls_namefam'].isnull())].sample()
     except ValueError:
         # In this case, there is no namefam_row match
         return None
