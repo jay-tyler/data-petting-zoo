@@ -58,8 +58,6 @@ target/
 
 # Engine related exclusions
 data
-data/pristine
-data/exports
 scratchtest.py
 !data/namefam.csv
 
