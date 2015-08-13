@@ -39,6 +39,9 @@ var makeDefs = function(callback) {
     createNewMapSVG();
 };
 
+var div = d3.select("body").append("div")   
+    .attr("class", "tooltip")               
+    .style("opacity", 0);
 
 var createNewMapSVG = function(callback) {
 
@@ -49,7 +52,6 @@ var createNewMapSVG = function(callback) {
 
     drawMap();
 };
-
 
 var drawMap = function() {
 
@@ -62,10 +64,9 @@ var drawMap = function() {
         .enter()
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
-        .attr("d", pZoo.mapObj.path);
-        plotPlace();
+        .attr("d", pZoo.mapObj.path)
+    plotPlace();
 };
-
 
 var drawLabels = function() {
 
@@ -119,7 +120,20 @@ var plotPlace = function() {
             return pZoo.mapObj.projection([d['long'], d['lat']])[1];
         })
         .attr("r", 5)
-        .style("fill", "red")
+        .style("fill", "grey")
+        .on("mouseover", function(d) { 
+            div.transition()        
+                .duration(100)      
+                .style("opacity", .9);      
+            div.html(d['name'])  
+                .style("left", (d3.event.pageX) + "px")     
+                .style("top", (d3.event.pageY - 28) + "px");    
+            })                  
+        .on("mouseout", function(d) {       
+            div.transition()        
+                .duration(500)      
+                .style("opacity", 0);   
+        });
 };
 
 var clearLabels = function() {
