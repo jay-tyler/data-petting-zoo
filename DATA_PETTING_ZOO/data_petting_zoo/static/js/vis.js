@@ -67,7 +67,7 @@ var createNewMapSVG = function() {
 
 // part of on-page-load setup;
 // draws map shapes
-// createNewMapSVG -> THIS -> plotPlace()
+// createNewMapSVG -> THIS -> drawLabels()
 var drawMap = function() {
 
     d3.select("body").select('svg').selectAll('.subunit')
@@ -80,9 +80,14 @@ var drawMap = function() {
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
         .attr("d", pZoo.mapObj.path);
+
+    drawLabels();
 };
 
 
+// part of on-page-load setup;
+// draws map shapes
+// drawMap() -> THIS
 var drawLabels = function() {
 
     if ( $.isEmptyObject(pZoo.mapObj.dat) === false ) {
@@ -155,8 +160,9 @@ var drawLabels = function() {
 
 var plotFamily = function(response) {
 
+    d3.select('.map-content').selectAll('circle').remove();
+
     d3.select(".map-content").select("svg").selectAll("circle")
-        .remove()
         .data($.parseJSON(response))
         .enter()
         .append("circle")
@@ -225,14 +231,22 @@ var createNewPopSVG = function() {
         .append("g")
         .attr("transform", "translate(" + pZoo.popObj.margin.left + "," + pZoo.popObj.margin.top + ")");
 
-    drawPopHisto();
+    // drawPopHisto();
 };
 
 
-var drawPopHisto = function() {
+var drawPopHisto = function(response) {
+
+    // remove old display contents
+    d3.select('.pop-content').selectAll('.bar').remove();
+    d3.select('.pop-content').selectAll('text').remove();
+
+    pZoo.popObj.response = response;
 
     // configure data
-    var origVals = d3.values(pZoo.popObj.dat.pop);
+    var parsed = $.parseJSON(response);
+    var origVals = [];
+    for (i = 0; i < parsed.length; i++) { origVals.push(parsed[i].pop); }
     var thresholds = [0, 1, 1000, 2000, 5000, 10000, 100000, 200000];
     var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
@@ -302,15 +316,24 @@ var createSliders = function() {
 };
 
 
+var initialSearch = function() {
+
+    $.ajax({
+        type: "GET",
+        url: "/search/ashley",
+    }).done(function(response) {
+        plotFamily(response);
+        drawPopHisto(response);
+    });
+
+};
+
+
 $( document ).ready( function() {
 
-    $( '#btn-add-labels' ).click( function(event) { drawLabels(); });
-
-    $( '#btn-clear-labels' ).click( function(event) { clearLabels(); });
-
     loadMapData();
-
-    loadPopData();
+    createNewPopSVG();
+    initialSearch();
 
     $('#search').submit(function(e) {
         e.preventDefault();
@@ -320,6 +343,8 @@ $( document ).ready( function() {
             url: "/search/" + $("#query").val(),
         }).done(function(response) {
             plotFamily(response);
+            drawPopHisto(response);
         });
+
     });
 });
