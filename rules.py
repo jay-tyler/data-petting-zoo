@@ -145,7 +145,6 @@ name_rules = {
 # Pick only feature codes that correspond to towns and cities, see
 # http://www.geonames.org/export/codes.html
 geofeat_rules = ("PPL", "PPLA", "PPLA2", "PPLA3", "PPLA4", "PPLC", "PPLCH",
-<<<<<<< HEAD
     "PPLF", "PPLG", "PPLH", "PPLL", "PPLQ", "PPLR", "PPLS", "PPLW")
 
 
@@ -165,6 +164,3 @@ wiki_codes = {
     'SG': 'Scots Gaelic',
     'W': 'Welsh'
 }
-=======
-    "PPLF", "PPLG", "PPLH", "PPLL", "PPLQ", "PPLR", "PPLS", "PPLW")
->>>>>>> 78a4fa84ad2b00c50c5a68bead58ef296a205ada
