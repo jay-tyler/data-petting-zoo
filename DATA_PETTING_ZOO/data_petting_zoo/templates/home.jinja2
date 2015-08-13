@@ -25,12 +25,6 @@
 
             <div class='map-heading'>
                 <h1>Great Britain</h1>
-                <button id='btn-add-labels'>Add Labels</button>
-                <button id='btn-clear-labels'>Clear Labels</button>
-                <form action="request.route_url('search', n" method="GET" id="search">
-                    <input type="text" id="query"></input>
-                    <input type="submit" value="Search"></input>
-                </form>
             </div>
 
             <div class='map-content'>
@@ -64,7 +58,11 @@
 
     <div class='sidebar-container'>
         <div class='sidebar-content'>
-            <h3>Test</h3>
+            <h3>Search</h3>
+                <form action="request.route_url('search', n" method="GET" id="search">
+                    <input type="text" id="query" value="Ashley"></input>
+                    <input type="submit" value="Search"></input>
+                </form>
         </div>
     </div>
 
