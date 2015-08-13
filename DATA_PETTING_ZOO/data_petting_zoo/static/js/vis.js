@@ -4,7 +4,7 @@ var pZoo = {
 };
 
 
-var loadData = function(callback) {
+var loadMapData = function() {
 
     d3.json("/static/js/project_shapefiles/uk.json", function(error, uk) {
         if (error) {
@@ -17,7 +17,7 @@ var loadData = function(callback) {
 };
 
 
-var makeDefs = function(callback) {
+var makeDefs = function() {
 
     pZoo.mapObj.width = 760;
 
@@ -40,7 +40,7 @@ var makeDefs = function(callback) {
 };
 
 
-var createNewMapSVG = function(callback) {
+var createNewMapSVG = function() {
 
     // create the SVG element that will hold the map
     var svg = d3.select(".map-content").append("svg")
@@ -100,7 +100,7 @@ var clearLabels = function() {
 
 var loadPopData = function() {
 
-    d3.json("/static/js/histogram/aberP.json", function(error, aberP) {
+    d3.json("/static/js/histogram/acPaccPockS.json", function(error, aberP) {
         if (error) {
             return console.error(error);
         } else {
@@ -126,101 +126,67 @@ var createNewPopSVG = function() {
         .append("g")
         .attr("transform", "translate(" + pZoo.popObj.margin.left + "," + pZoo.popObj.margin.top + ")");
 
-    testHisto();
+    drawPopHisto();
 };
 
 
-var drawHisto = function() {
+var drawPopHisto = function() {
 
+    // configure data
+    var origVals = d3.values(pZoo.popObj.dat.pop);
     var thresholds = [0, 1, 1000, 2000, 5000, 10000, 100000, 200000];
+    var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
-    var data = d3.layout.histogram()
-        .bins(thresholds)
-        .value( pZoo.popObj.dat, function(d) { return d.pop; });
-
+    // configure scales
+    var xScale = d3.scale.ordinal()
+        .domain(thresholds)
+        .rangeRoundBands([0, pZoo.popObj.width], 0.2, 0.6);
     var yScale = d3.scale.linear()
-        .domain([0, d3.max(pZoo.popObj.dat, function(d) {
-            return d.pop;
-        })])
-        .range([500, 0]);
-
-    var xAxis = d3.svg.axis()
-        .ticks(thresholds);
-
-    var bar = d3.select('pop-content').select('svg').selectAll('.bar')
-        .data(data)
-        .enter()
-        .append('g')
-        .attr('class', 'bar');
-
-    bar.append('rect')
-        .attr('x', 1)
-        .attr('width', 10)
-        .attr('height', function(d) { return 500 - yScale(d.pop); });
-
-    bar.append('text')
-        .attr('dy', '0.75em')
-        .attr('y', 6)
-        .attr('x', 2)
-        .attr('text-anchor','middle')
-        .text(function(d) { return d.pop; });
-
-    d3.select('pop-content').select('svg')
-        .append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0' + 500 + ')')
-        // .call('xAxis')
-        ;
-};
-
-
-var testHisto = function() {
-    // Generate a Bates distribution of 10 random variables.
-    var values = d3.range(1000).map(d3.random.bates(10));
-
-    // A formatter for counts.
-    var formatCount = d3.format(",.0f");
-
-    var x = d3.scale.linear()
-        .domain([0, 1])
-        .range([0, pZoo.popObj.width]);
-
-    // Generate a histogram using twenty uniformly-spaced bins.
-    var data = d3.layout.histogram()
-        .bins(x.ticks(20))
-        (values);
-
-    var y = d3.scale.linear()
-        .domain([0, d3.max(data, function(d) { return d.y; })])
+        .domain([d3.max(binnedVals, function(d) { return d.y; }), 0])
         .range([pZoo.popObj.height, 0]);
 
+    // var tempScale = d3.scale.linear().domain([0, bins]).range([lowerBand, upperBand]);
+    // var tickArray = d3.range(bins + 1).map(tempScale);
+
+    // configure axes (just x-axis, no y-axis)
     var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom");
+        .scale(xScale)
+        .orient('bottom');
 
-    var bar = d3.select('.pop-content').select('svg').selectAll(".bar")
-        .data(data)
+    // NOW GRAPH!
+    var bar = d3.select('.pop-content').select('svg').selectAll('.bar')
+        .data(binnedVals)
         .enter()
-        .append("g")
-        .attr("class", "bar")
-        .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+        .append('g')
+        .attr('class', 'bar')
+        .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
 
-    bar.append("rect")
-        .attr("x", 1)
-        .attr("width", x(data[0].dx) - 1)
-        .attr("height", function(d) { return pZoo.popObj.height - y(d.y); });
+    bar.append('rect')
+        // .attr('x', '10')
+        // Not sure how to leverage this x-offset; I've managed to produce no noticeable results
 
+        // .attr('width', pZoo.popObj.width / binnedVals.length)
+        .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
+        .attr('width', xScale.rangeBand())
+        .attr('height', function(d) { return yScale(d.y); });
+
+    // graph the axes
+    d3.select('.pop-content').select('svg')
+        .append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(' + xScale.rangeBand() / 1.6 + ', ' + pZoo.popObj.height + ')')
+        .call(xAxis);
+
+    // configure and graph text
+    var formatCount = d3.format(",.0f");
     bar.append("text")
         .attr("dy", ".75em")
-        .attr("y", 6)
-        .attr("x", x(data[0].dx) / 2)
+        // .attr("y", 6)
+        .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
+        // .attr("x", function(d) { return d[0] / 2; })
+        .attr('transform', function(d) { return 'translate(' + xScale.rangeBand() / 2 + ', 0)'; })
         .attr("text-anchor", "middle")
         .text(function(d) { return formatCount(d.y); });
-
-    d3.select('.pop-content').select('svg').append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + pZoo.popObj.height + ")")
-        .call(xAxis);
 };
 
 
@@ -239,7 +205,7 @@ $( document ).ready( function() {
 
     $( '#btn-clear-labels' ).click( function(event) { clearLabels(); });
 
-    loadData();
+    loadMapData();
 
     loadPopData();
 });
