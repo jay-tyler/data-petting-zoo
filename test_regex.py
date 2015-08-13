@@ -24,20 +24,18 @@ def test_not_aberP():
             assert m is None
 
 
-def test_bergQberryS():
-    # import ipdb; ipdb.set_trace()
+def test_blenPblaenP():
     found = []
     strings = ['cheese', 'echidna', 'Blencathra', 'Blencogo', 'Blaenau Ffestiniog', 'Blantyre']
     for string in strings:
-        for regex in name_rules['bergQberryS']:
+        for regex in name_rules['blenPblaenP']:
             m = match(regex, string)
             if m is not None:
                 found.append(m.group())
     assert found == strings[2:]
 
 
-def test_not_bergQberryS():
-    found = []
+def test_not_blenPblaenP():
     strings = ['cheese', 'echidna']
     for string in strings:
         for regex in name_rules['aberP']:
@@ -45,12 +43,60 @@ def test_not_bergQberryS():
             assert m is None
 
 
-def test_casterSchasterScesterSceterScaisterQxeterS():
+def test_dunPdumPdonPdouneP():
+    # import ipdb; ipdb.set_trace()
     found = []
-    strings = ['Damaraland mole rat', 'Cape Dune mole rat', 'Lancaster', 'Doncaster', 'Gloucester', 'Caister', 'Manchester', 'Chichester', 'Worcester', 'Chester', 'Exeter', 'Cirencester', 'Colchester', 'Tadcaster', 'Leicester', 'Towcester']
+    strings = ['Damaraland mole rat', 'Somalian Stripe mole rat', 'Dundee', 'Dumbarton', 'Dungannon', 'Dumfries', 'Donegal']
     for string in strings:
-        for regex in name_rules['casterSchasterScesterSceterScaisterQxeterS']:
+        for regex in name_rules["dunPdumPdonPdouneP"]:
             m = match(regex, string)
             if m is not None:
                 found.append(m.group())
     assert found == strings[2:]
+
+
+def test_not_dunPdumPdonPdouneP():
+    strings = ['Damaraland mole rat', 'Somalian stripe mole rat']
+    for string in strings:
+        for regex in name_rules["dunPdumPdonPdouneP"]:
+            m = match(regex, string)
+            assert m is None
+
+
+def test_gillPgillSghyllPghyllA():
+    # import ipdb; ipdb.set_trace()
+    found = []
+    strings = ['Cape dune mole rat', 'Namibian mole rat', 'Gillamoor', 'Garrigill', 'Dungeon Ghyll']
+    for string in strings:
+        for regex in name_rules["gillPgillSghyllPghyllA"]:
+            m = match(regex, string)
+            if m is not None:
+                found.append(m.group())
+    assert found == strings[2:]
+
+def test_not_gillPgillSghyllPghyllA():
+    strings = ['Cape dune mole rat', 'Namibian mole rat']
+    for string in strings:
+        for regex in name_rules["gillPgillSghyllPghyllA"]:
+            m = match(regex, string)
+            assert m is None
+
+
+def test_eaglesPeglosPeglewsPecclesP():
+    # import ipdb; ipdb.set_trace()
+    found = []
+    strings = ['Ethiopian mole rat', 'Silvery mole rat', 'Eaglesham', 'Egloskerry', 'Ecclefechan']
+    for string in strings:
+        for regex in name_rules["eaglesPeglosPeglewsPecclesP"]:
+            m = match(regex, string)
+            if m is not None:
+                found.append(m.group())
+    assert found == strings[2:]
+
+
+def test_not_eaglesPeglosPeglewsPecclesP():
+    strings = ['Ethiopian mole rat', 'Silvery mole rat']
+    for string in strings:
+        for regex in name_rules["gillPgillSghyllPghyllA"]:
+            m = match(regex, string)
+            assert m is None
