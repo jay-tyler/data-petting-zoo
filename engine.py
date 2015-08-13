@@ -1,5 +1,5 @@
 from re import match
-from random import choice
+from random import sample
 from string import capwords, strip
 import pandas as pd
 import numpy as np
@@ -21,7 +21,7 @@ except IOError:
     pass
 
 
-### Data setup ###
+### Setup Data Functions###
 def set_gb(file_path):
     """Read the GB.txt file from geonames and return an appropriately
     filtered DataFrame"""
@@ -108,6 +108,11 @@ def set_alt(df, column_names=None):
 
     df_alt[~df_alt['name'].str.contains('/')]
     return df_alt
+
+
+def set_namfam_table(file_path):
+    """Read the namfam csv file and load to a table"""
+    return pd.read_csv(file_path)
 
 
 def append_nuts3_region(dfin, shapefile_path):
@@ -197,7 +202,7 @@ def query_random(df):
     """Return a sub-dataframe corresponding to a particular namefamily. 
     Also return a sample placename from that namefamily"""
     namekey = choice(name_rules.keys())
-    subdf = getfamdf(df, namekey)
+    subdf = get_fam(df, namekey)
     placename = choice(subdf['name'])
     return subdf, placename
 
@@ -232,10 +237,17 @@ def query_placename(df, placestring):
     return get_fam(df, namekey), namekey, placename.values[0]
 
 
+def query_pop_slice(df, popthresh):
+    """Return a sub-DataFrame from DataFrame df that excludes all population
+    values below the threshold"""
+
+    return df[df['pop'] >= popthresh]
+
+
 if __name__ == "__main__":
     gbf = 'data/pristine/GB.txt'
-    gb = setgb(gbf)
-    gb2 = setfam(gb)
+    gb = set_gb(gbf)
+    gb2 = set_fam(gb)
 
     print gb2['ls_namefam'].dropna()
 
