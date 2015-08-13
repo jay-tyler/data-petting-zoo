@@ -1,5 +1,7 @@
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
+from pyramid.renderers import JSON
+from pandas import DataFrame
 
 from .models import (
     DBSession,
@@ -15,6 +17,11 @@ def main(global_config, **settings):
     Base.metadata.bind = engine
 
     config = Configurator(settings=settings)
+    json_renderer = JSON()
+    def dataframe_adapter(df, request):
+        return df.to_dict(orient="records")
+    json_renderer.add_adapter(DataFrame, dataframe_adapter)
+    config.add_renderer('json', json_renderer)
 
     config.include('pyramid_jinja2')
     config.include('pyramid_tm')

@@ -1,9 +1,10 @@
 from pyramid.view import view_config
 import pandas as pd
 import json
-from engine import query_placename
+from engine import query_name_or_fam, query_namefam_table
 
 gb = pd.read_pickle("../data/pickles/gb13.pk1")
+NAMEFAM = pd.read_table("../data/namefam.tab")
 
 
 @view_config(route_name='search',
@@ -20,7 +21,8 @@ def home_view(request):
         return {}
 
     if 'HTTP_X_REQUESTED_WITH' in request.environ:
-        fam_df, namekey, placename = query_placename(gb, name)
+        fam_df, namekey, placename = query_name_or_fam(gb, name)
+        namefam_dict = query_namefam_table(namekey)
         # if place doesn't have a family name - return place row, plot
         # point
 
@@ -28,7 +30,8 @@ def home_view(request):
 
         # else, return all three as json obj
 
-        return fam_df.to_json(orient="records")
+        return {'fam_df': fam_df.fillna(0),
+                'namefam_dict': namefam_dict}
 
     # else:
     #     place = gb.loc[gb['name'] == name]
