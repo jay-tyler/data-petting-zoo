@@ -62,11 +62,20 @@
 
     <div class='sidebar-container'>
         <div class='sidebar-content'>
+
             <h3>Search</h3>
-                <form action="request.route_url('search', n" method="GET" id="search">
-                    <input type="text" id="query" value="Ashley"></input>
-                    <input type="submit" value="Search"></input>
-                </form>
+            <form action="request.route_url('search', n" method="GET" id="search">
+                <input type="text" id="query" value="Ashley"></input>
+                <input type="submit" value="Search"></input>
+            </form>
+
+            <h3>Name Families</h3>
+            <select id='dropdown'>
+                <option>Select Pattern</option>
+            {% for i in menu_items %}
+                <option value="{{ i[0] }}">{{ i[1] }}</option>
+            {% endfor %}
+            </select>
         </div>
     </div>
 
