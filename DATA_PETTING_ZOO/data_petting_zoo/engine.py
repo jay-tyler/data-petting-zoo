@@ -42,7 +42,7 @@ def set_gb(file_path):
     # Removing rows that correspond to Cyprus, N. Ireland, cruft etc.
     remove_these_adm1 = ['05', '00', '01', 'NIR', '03']
     for i in remove_these_adm1:
-        gb = gb[gb.adm1 != i]
+        gb = gb[gb['adm1'] != i]
     # Get rid of adm1 with null values
     gb = gb[~gb.adm1.isnull()]
     # Setting a list of alternate names from altname string field
@@ -192,8 +192,9 @@ def patinstr(string, patlist):
 
 ### DataFrame Query Functions ###
 def get_fam(df, namekey):
-    """Get dataframe subset from df for rows belonging to the family
-    which is a sub"""
+    """Return a (sub-dataframe, namekey, placename) corresponding to a
+    particular namefamily. Will return None for placename from that
+    namefamily"""
     def _droidfind(listin):
         result = None
         try:
@@ -202,21 +203,23 @@ def get_fam(df, namekey):
             pass
         return result if result is True else None
     mask = df['ls_namefam'].map(lambda x: _droidfind(x))
-    return df[~mask.isnull()]
+    return df[~mask.isnull()], namekey, None
 
 
 def query_random(df):
-    """Return a sub-dataframe corresponding to a particular namefamily. 
-    Also return a sample placename from that namefamily"""
-    namekey = sample(name_rules.keys())
-    subdf = get_fam(df, namekey)
-    placename = sample(subdf['name'])
-    return subdf, placename
+    """Return a (sub-dataframe, namekey, placename) corresponding to a
+    particular namefamily. Also return a sample placename from that
+    namefamily"""
+    df = df.copy()
+    namekeys = name_rules.keys()
+    namekey = sample(namekeys, 1)[0]
+    subdf = get_fam(df, namekey)[0]
+    placename = subdf['name'].sample().values[0]
+    return subdf, namekey, placename
 
 
 def query_name(df, placestring):
     """Return a sub-DataFrame containing boolean matches to place name.
-
     This is intended as a Helper function. Will attempt a more literal
     match, and if this fails, will try a loose match.
     """
@@ -231,12 +234,12 @@ def query_name(df, placestring):
 
 
 def query_placename(df, placestring):
-    """Attempt to match placestring to a city with a family pattern; 
+    """Attempt to match placestring to a city with a family pattern;
     return the matching sub-DataFrame, namekey, and full placename if a match
     is made, else None
-
     If there are multiple associated name families, then one will be
     picked at random"""
+    df = df.copy()
     query = query_name(df, placestring)
     # Return a dataframe row with the placename contained;
     # assure that this row actually has a namefam associated
@@ -250,21 +253,18 @@ def query_placename(df, placestring):
     # An ugly way to get the string out
     namekey = namekey.values[0][0]
     placename = namefam_row['name']
-    return get_fam(df, namekey), namekey, placename.values[0]
+    return get_fam(df, namekey)[0], namekey, placename.values[0]
 
 
 def query_name_or_fam(df, placestring):
     """Attempt to match placestring to a city with a family pattern; else
     attempt to find a place of the same name. Return None otherwise.
-
     If namefamily is found: return the matching sub-DataFrame, namekey,
     and full placenameif a match
-
     If namefamily is not found, but placename is: return the singular placename
     row as a DataFrame, None for namekey, and full placename
-
     Otherwise return None."""
-
+    df = df.copy()
     result = query_placename(df, placestring)
     if result is None:
         # Case of place with no namefam
@@ -289,7 +289,7 @@ def query_namefam_table(namekey):
     a namefam table in human readable string format"""
     row = NAMEFAM[NAMEFAM['namekey'] == namekey]
     if row.shape[0] == 0:
-    # Case of asking for a namekey that doesn't exist
+        # Case of asking for a namekey that doesn't exist
         return None
     toreturn = dict()
 
@@ -299,12 +299,13 @@ def query_namefam_table(namekey):
         frag = wiki_codes.get(code.rstrip(',').lstrip())
         frag = frag if frag is not None else ""
         wiki_str += "{}, ".format(frag)
-    # Maybe refactor these iteratively later
-    toreturn['wiki_codes'] = wiki_str.rstrip(", ")
-    toreturn['namekey'] = row['namekey'].values[0]
-    toreturn['humandef'] = row['humandef'].values[0]
-    toreturn['lan_notes'] = row['lan_notes'].values[0]
-    toreturn['human_namekey'] = row['human_namekey'].values[0]
+    wiki_str = wiki_str.rstrip(", ")
+    toreturn['wiki_codes'] = wiki_str
+    for colname in ['namekey', 'humandef', 'lan_notes', 'human_namekey']:
+        val = row[colname].values[0]
+        if pd.isnull(val):
+            val = None
+        toreturn[colname] = val
     return toreturn
 
 
