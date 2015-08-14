@@ -15,7 +15,7 @@ html,
 body,
 header,
 div {
-    width: 100%;
+    /*width: 100%;*/
     text-align: center;
     margin: auto;
 }
@@ -48,6 +48,19 @@ Header
 Nav
 ********************************/
 
+.nav {
+    position: relative;
+    bottom: 5%;
+    vertical-align: bottom;
+}
+
+.nav a,
+.nav a:visited,
+.nav a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
 #home_link {
     float: left;
     padding-left: 50px;
@@ -59,55 +72,49 @@ Nav
 }
 
 /********************************
-Body
+Querybar
 ********************************/
 
-#body-container {
-    width: 60%;
-    margin-top: 100px;
-    margin-left: 0;
-    float: left;
+.querybar-container {
+    height: 80px;
 }
 
-#body-container > * {
-    margin-bottom: 80px;
-}
-
-.map-heading {
-    clear: both;
-    margin-bottom: 20px;
-}
-
-svg {
-    border: 2px solid #000;
-    border-radius: 15px;
-}
-
-/********************************
-Sidebar
-********************************/
-
-.sidebar-container {
+.querybar-content {
+    width: 100%;
     height: 100%;
-    margin-top: 200px;
+    text-align: center;
+    background-color: #fff;
+    border-bottom: 1px solid #666;
 }
 
-.sidebar-content {
-    margin-left: 75%;
-    margin-top: 30px;
-    padding-top: 20px;
-    position: relative;
-    width: 18%;
-    height: 75%;
-    background-color: #fff;
-    border: 1px solid #000;
-    border-radius: 5px;
-    box-shadow: 0 0 30px 2px rgba(0,0,0,0.35);
+.search-container {
+    width: 45%;
+    display: inline-block;
+}
+
+.dropdown-container {
+    width: 45%;
+    display: inline-block;
 }
 
 .stick {
     position: fixed;
     top: 0;
+    height: 80px;
+}
+
+/********************************
+Body
+********************************/
+
+.body-container {
+    width: 100%;
+    margin-top: 100px;
+}
+
+.body-container > * {
+    margin-bottom: 80px;
+    width: 40%;
 }
 
 /********************************
@@ -115,9 +122,34 @@ NameFam Info
 ********************************/
 
 #namefam-info-container {
-    text-align: left;
+    padding: 0 5%;
+    text-align: center;
     font-family: 'Libre Baskerville', serif;
     color: #31383D;
+    height: 100px;
+}
+
+/********************************
+Left-Side Container
+********************************/
+
+.left-side-container {
+    width: 48%;
+    margin: auto;
+    display: inline-block;
+    text-align: center;
+}
+
+/********************************
+Right-Side Container
+********************************/
+
+.right-side-container {
+    width: 48%;
+    margin: auto;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
 }
 
 /********************************
@@ -168,22 +200,4 @@ footer {
 
 .about-ul a {
     padding: 0;
-}
-
-
-/********************************
-Map
-********************************/
-
-div.tooltip {   
-    position: absolute;         
-    text-align: center;   
-    width: 60px;                    
-    height: 28px;                   
-    padding: 2px;               
-    font: 12px sans-serif;      
-    background: lightsteelblue; 
-    border: 0px;        
-    border-radius: 8px;         
-    pointer-events: none;           
 }

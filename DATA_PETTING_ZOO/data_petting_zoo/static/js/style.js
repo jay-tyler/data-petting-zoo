@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var s = $(".sidebar-content");
+    var s = $(".querybar-content");
     var pos = s.position();
     $(window).scroll(function() {
         var windowpos = $(window).scrollTop();
