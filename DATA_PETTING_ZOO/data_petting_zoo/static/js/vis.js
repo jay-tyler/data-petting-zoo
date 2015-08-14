@@ -197,63 +197,64 @@ var drawPopHisto = function(response) {
     d3.select('.pop-content').selectAll('.bar').remove();
     d3.select('.pop-content').selectAll('text').remove();
 
-    pZoo.popObj.response = response;
+    if (!$.isEmptyObject(pZoo.popObj.response)) {
 
-    // configure data
-    dat = response.fam_df;
-    var origVals = [];
-    for (i = 0; i < dat.length; i++) { origVals.push(dat[i].pop); }
-    var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
-    var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
+        // configure data
+        dat = pZoo.popObj.response.fam_df;
+        var origVals = [];
+        for (i = 0; i < dat.length; i++) { origVals.push(dat[i].pop); }
+        var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
+        var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
-    // configure scales
-    var xScale = d3.scale.ordinal()
-        .domain(thresholds)
-        .rangeRoundBands([0, pZoo.popObj.width], 0.2, 0.6);
-    var yScale = d3.scale.linear()
-        .domain([d3.max(binnedVals, function(d) { return d.y; }), 0])
-        .range([pZoo.popObj.height - (2 * pZoo.popObj.margin.top), 0]);
+        // configure scales
+        var xScale = d3.scale.ordinal()
+            .domain(thresholds)
+            .rangeRoundBands([0, pZoo.popObj.width], 0.2, 0.6);
+        var yScale = d3.scale.linear()
+            .domain([d3.max(binnedVals, function(d) { return d.y; }), 0])
+            .range([pZoo.popObj.height - (2 * pZoo.popObj.margin.top), 0]);
 
-    // var tempScale = d3.scale.linear().domain([0, bins]).range([lowerBand, upperBand]);
-    // var tickArray = d3.range(bins + 1).map(tempScale);
+        // var tempScale = d3.scale.linear().domain([0, bins]).range([lowerBand, upperBand]);
+        // var tickArray = d3.range(bins + 1).map(tempScale);
 
-    // configure axes (just x-axis, no y-axis)
-    var xAxis = d3.svg.axis()
-        .scale(xScale)
-        .orient('bottom')
-        .tickValues(thresholds);
-        // .tickValues([0, 1000, 2000, 5000, 10000, 100000]);
+        // configure axes (just x-axis, no y-axis)
+        var xAxis = d3.svg.axis()
+            .scale(xScale)
+            .orient('bottom')
+            .tickValues(thresholds);
+            // .tickValues([0, 1000, 2000, 5000, 10000, 100000]);
 
-    // DRAW, PILGRIM!
-    // draw the 'bar' elements
-    var bar = d3.select('.pop-content').select('svg').selectAll('.bar')
-        .data(binnedVals)
-        .enter()
-        .append('g')
-        .attr('class', 'bar')
-        .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+        // DRAW, PILGRIM!
+        // draw the 'bar' elements
+        var bar = d3.select('.pop-content').select('svg').selectAll('.bar')
+            .data(binnedVals)
+            .enter()
+            .append('g')
+            .attr('class', 'bar')
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
 
-    // draw the rectangles - these are the actual visualization bits
-    bar.append('rect')
-        .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
-        .attr('width', xScale.rangeBand())
-        .attr('height', function(d) { return yScale(d.y); });
+        // draw the rectangles - these are the actual visualization bits
+        bar.append('rect')
+            .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
+            .attr('width', xScale.rangeBand())
+            .attr('height', function(d) { return yScale(d.y); });
 
-    // draw the axes
-    d3.select('.pop-content').select('svg')
-        .append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(' + xScale.rangeBand() / 1.6 + ', ' + pZoo.popObj.height + ')')
-        .call(xAxis);
+        // draw the axes
+        d3.select('.pop-content').select('svg')
+            .append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(' + xScale.rangeBand() / 1.6 + ', ' + pZoo.popObj.height + ')')
+            .call(xAxis);
 
-    // configure and draw text labels
-    var formatCount = d3.format(",.0f");
-    bar.append("text")
-        .attr("dy", ".75em")
-        .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y) - 10; })
-        .attr('transform', function(d) { return 'translate(' + xScale.rangeBand() / 2 + ', 0)'; })
-        .attr("text-anchor", "middle")
-        .text(function(d) { return formatCount(d.y); });
+        // configure and draw text labels
+        var formatCount = d3.format(",.0f");
+        bar.append("text")
+            .attr("dy", ".75em")
+            .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y) - 10; })
+            .attr('transform', function(d) { return 'translate(' + xScale.rangeBand() / 2 + ', 0)'; })
+            .attr("text-anchor", "middle")
+            .text(function(d) { return formatCount(d.y); });
+    }
 };
 
 
@@ -273,47 +274,59 @@ var doSearch = function(url, query) {
         dataType: 'json',
         url: url + query,
     }).done(function(response) {
-        if (response['error']) {
+        if (response.error) {
             showErrorSheep(response);
+            pZoo.popObj.response = {};
         }
-        else if (response['message']) {
+        else if (response.message) {
             showRowInfo(response);
         }
-        else if (query === response['namefam_dict']['namekey']) {
+        else if (query === response.namefam_dict.namekey) {
             showNameKeyInfo(response);
         }
         else {
-            showNameFamInfo(response);    
+            showNameFamInfo(response);
         }
+        pZoo.popObj.response = response;
         plotFamily(response);
-        drawPopHisto(response);
+        drawPopHisto();
     }).fail(function(a,b,c) {
         alert('foo');
     });
 };
 
 var showNameFamInfo = function(response) {
-    $("#placename").text(response['name']);
-    $("#namefam-info").text( "Belongs to a family of names containing the following form: " +
-        response['namefam_dict']['human_namekey'] + ", which means " +
-        response['namefam_dict']['humandef'] + ". This form originates from " +
-        response['namefam_dict']['wiki_codes'] + ".")
+    $("#placename").text(response.name);
+    $("#namefam-info").text(
+        "Belongs to a family of names containing the following form: " +
+        response.namefam_dict.human_namekey +
+        ", which means " +
+        response.namefam_dict.humandef +
+        ". This form originates from " +
+        response.namefam_dict.wiki_codes +
+        "."
+    );
 };
 
 var showNameKeyInfo = function(response) {
-    $("#placename").text(response['namefam_dict']['human_namekey']);
-    $("#namefam-info").text("This form means " + response['namefam_dict']['humandef'] + ". It originates from " +
-        response['namefam_dict']['wiki_codes']);
+    $("#placename").text(response.namefam_dict.human_namekey);
+    $("#namefam-info").text(
+        "This name form means " +
+        response.namefam_dict.humandef +
+        ". It originates from " +
+        response.namefam_dict.wiki_codes +
+        '.'
+    );
 };
 
 var showErrorSheep = function(response) {
-    $("#placename").text(response['error']);
+    $("#placename").text(response.error);
     $("#namefam-info").empty();
 };
 
 var showRowInfo = function(response) {
-    $("#placename").text(response['name']);
-    $("#namefam-info").text(response['message']);
+    $("#placename").text(response.name);
+    $("#namefam-info").text(response.message);
 };
 
 
