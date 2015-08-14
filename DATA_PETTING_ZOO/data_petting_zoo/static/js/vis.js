@@ -113,35 +113,38 @@ var drawLabels = function() {
 };
 
 
-var plotFamily = function(response) {
+var plotFamily = function() {
 
     d3.select('.map-content').select("svg").selectAll('circle').remove();
 
-    d3.select(".map-content").select("svg").selectAll("circle")
-        .data(response.fam_df)
-        .enter()
-        .append("circle")
-        .attr("cx", function(d) {
-            return pZoo.mapObj.projection([d.long, d.lat])[0];
-        })
-        .attr("cy", function(d) {
-            return pZoo.mapObj.projection([d.long, d.lat])[1];
-        })
-        .attr("r", 4)
-        .style("fill", "grey")
-        .on("mouseover", function(d) {
-            div.transition()
-                .duration(100)
-                .style("opacity", 0.9);
-            div.html(d.name)
-                .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+
+        d3.select(".map-content").select("svg").selectAll("circle")
+            .data(pZoo.popObj.response.fam_df)
+            .enter()
+            .append("circle")
+            .attr("cx", function(d) {
+                return pZoo.mapObj.projection([d.long, d.lat])[0];
             })
-        .on("mouseout", function(d) {
-            div.transition()
-                .duration(500)
-                .style("opacity", 0);
+            .attr("cy", function(d) {
+                return pZoo.mapObj.projection([d.long, d.lat])[1];
+            })
+            .attr("r", 4)
+            .style("fill", "grey")
+            .on("mouseover", function(d) {
+                div.transition()
+                    .duration(100)
+                    .style("opacity", 0.9);
+                div.html(d.name)
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+                })
+            .on("mouseout", function(d) {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
         });
+    }
 };
 
 
@@ -191,13 +194,13 @@ var createNewPopSVG = function() {
 };
 
 
-var drawPopHisto = function(response) {
+var drawPopHisto = function() {
 
     // remove old display contents
     d3.select('.pop-content').selectAll('.bar').remove();
     d3.select('.pop-content').selectAll('text').remove();
 
-    if (!$.isEmptyObject(pZoo.popObj.response)) {
+    if ($.isEmptyObject(pZoo.popObj.response.error)) {
 
         // configure data
         dat = pZoo.popObj.response.fam_df;
@@ -288,7 +291,7 @@ var doSearch = function(url, query) {
             showNameFamInfo(response);
         }
         pZoo.popObj.response = response;
-        plotFamily(response);
+        plotFamily();
         drawPopHisto();
     }).fail(function(a,b,c) {
         alert('foo');
