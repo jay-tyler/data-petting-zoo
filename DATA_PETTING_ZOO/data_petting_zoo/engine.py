@@ -10,7 +10,7 @@ from shapely.prepared import prep
 from shapely import speedups
 from rules import name_rules, geofeat_rules, wiki_codes
 
-DATA_ROOT = "" # TODO: wire this up
+DATA_ROOT = ""  # TODO: wire this up
 
 # Warn if a value is being assigned to a copy
 pd.set_option('mode.chained_assignment', 'warn')
@@ -28,6 +28,7 @@ except IOError:
     # TODO: In this case should do a bunch of stuff to get gb into namespace
     print 'oh no'
 
+
 ### Setup Data Functions###
 def set_gb(file_path):
     """Read the GB.txt file from geonames and return an appropriately
@@ -35,9 +36,11 @@ def set_gb(file_path):
     gb = pd.read_csv(file_path)
     # Trim away an initial index column
     gb = gb.ix[:, 1:20]
-    column_names = ['geoid', 'name', 'asciiname', 'altname', 'lat', 'long',
+    column_names = [
+        'geoid', 'name', 'asciiname', 'altname', 'lat', 'long',
         'feature_class', 'feature_code', 'country_code', 'cc2', 'adm1', 'adm2',
-        'adm3', 'adm4', 'pop', 'elev', 'delev', 'timezone', 'moddate']
+        'adm3', 'adm4', 'pop', 'elev', 'delev', 'timezone', 'moddate'
+    ]
     gb.columns = column_names
     # Removing rows that correspond to Cyprus, N. Ireland, cruft etc.
     remove_these_adm1 = ['05', '00', '01', 'NIR', '03']
@@ -93,10 +96,12 @@ def set_alt(df, column_names=None):
     df_alt['parent'] = np.nan
 
     if column_names is None:
-        column_names = ['geoid', 'name', 'parent', 'asciiname', 'lat', 'long',
-                     'feature_class', 'feature_code', 'country_code', 'cc2',
-                     'adm1', 'adm2', 'adm3', 'adm4', 'pop', 'elev', 'delev',
-                     'timezone', 'moddate']
+        column_names = [
+            'geoid', 'name', 'parent', 'asciiname', 'lat', 'long',
+            'feature_class', 'feature_code', 'country_code', 'cc2',
+            'adm1', 'adm2', 'adm3', 'adm4', 'pop', 'elev', 'delev',
+            'timezone', 'moddate'
+        ]
     df_alt = df_alt[column_names]
 
     i = len(df)
@@ -125,8 +130,8 @@ def set_namefam_table(file_path):
 def append_nuts3_region(dfin, shapefile_path):
     """ Take a pandas dataframe with lat and long columns and a shapefile.
     Convert coordinates to Shapely points to do a point-in-polygon check
-    for each point. Append name of nuts3 region corresponding to point-in-polygon
-    to the dataframe.
+    for each point. Append name of nuts3 region corresponding to
+    point-in-polygon to the dataframe.
     This is extremely slow. Needs to be optimized with Shapely boundary box.
     """
     df = dfin.copy()
@@ -206,7 +211,7 @@ def get_fam(df, namekey):
 
 
 def query_random(df):
-    """Return a sub-dataframe corresponding to a particular namefamily. 
+    """Return a sub-dataframe corresponding to a particular namefamily.
     Also return a sample placename from that namefamily"""
     namekey = sample(name_rules.keys())
     subdf = get_fam(df, namekey)
@@ -231,7 +236,7 @@ def query_name(df, placestring):
 
 
 def query_placename(df, placestring):
-    """Attempt to match placestring to a city with a family pattern; 
+    """Attempt to match placestring to a city with a family pattern;
     return the matching sub-DataFrame, namekey, and full placename if a match
     is made, else None
 
@@ -289,7 +294,7 @@ def query_namefam_table(namekey):
     a namefam table in human readable string format"""
     row = NAMEFAM[NAMEFAM['namekey'] == namekey]
     if row.shape[0] == 0:
-    # Case of asking for a namekey that doesn't exist
+        # Case of asking for a namekey that doesn't exist
         return None
     toreturn = dict()
 

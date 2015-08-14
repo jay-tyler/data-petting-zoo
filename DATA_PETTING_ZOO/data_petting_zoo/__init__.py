@@ -18,8 +18,10 @@ def main(global_config, **settings):
 
     config = Configurator(settings=settings)
     json_renderer = JSON()
+
     def dataframe_adapter(df, request):
         return df.to_dict(orient="records")
+
     json_renderer.add_adapter(DataFrame, dataframe_adapter)
     config.add_renderer('json', json_renderer)
 
@@ -32,6 +34,7 @@ def main(global_config, **settings):
     config.add_route('about', '/about')
     config.add_route('place', '/place/{name}')
     config.add_route('search', '/search/{name}')
+    config.add_route('dropdown', '/dropdown/{namekey}')
 
     config.scan()
 
