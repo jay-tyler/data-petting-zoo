@@ -179,6 +179,10 @@ var drawPopHisto = function() {
         var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
+        // this is a hack to not display the 0-bin
+        thresholds = thresholds.slice(1);
+        binnedVals = binnedVals.slice(1);
+
         // configure scales
         var xScale = d3.scale.ordinal()
             .domain(thresholds)
@@ -204,8 +208,11 @@ var drawPopHisto = function() {
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
-            .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
+            .attr('y', pZoo.popObj.height)
+            .attr('height', 0)
             .attr('width', xScale.rangeBand())
+            .transition()
+            .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
             .attr('height', function(d) { return yScale(d.y); });
 
         // draw the axes
@@ -259,10 +266,12 @@ var drawElevHisto = function() {
         dat = pZoo.popObj.response.fam_df;
         var origVals = [];
         for (i = 0; i < dat.length; i++) { origVals.push(dat[i].delev); }
-        var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
+        var thresholds = [-9999, 0, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 750];
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
-        console.log(binnedVals);
+        // this is a hack to not display the 0-bin
+        thresholds = thresholds.slice(1);
+        binnedVals = binnedVals.slice(1);
 
         // configure scales
         var xScale = d3.scale.ordinal()
@@ -289,8 +298,11 @@ var drawElevHisto = function() {
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
-            .attr('y', function(d) { return pZoo.elevObj.height - yScale(d.y); })
+            .attr('y', pZoo.elevObj.height)
+            .attr('height', 0)
             .attr('width', xScale.rangeBand())
+            .transition()
+            .attr('y', function(d) { return pZoo.elevObj.height - yScale(d.y); })
             .attr('height', function(d) { return yScale(d.y); });
 
         // draw the axes
