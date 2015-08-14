@@ -1,12 +1,15 @@
 var pZoo = {
     'mapObj': {},
     'popObj': {},
+    'elevObj': {},
 };
 
 
-// part of on-page-load setup;
-// reads data from json file, stores it in pZoo.mapObj namespace
-// THIS -> makeDefs()
+////////////////////////////////////////////////////////////////
+// MAP
+////////////////////////////////////////////////////////////////
+
+
 var loadMapData = function() {
 
     d3.json("/static/js/project_shapefiles/uk.json", function(error, uk) {
@@ -20,15 +23,9 @@ var loadMapData = function() {
 };
 
 
-// part of on-page-load setup;
-// creates variables used in map vis, stores in pZoo.mapObj namespace
-// loadMapData() -> THIS -> createNewMapSVG()
 var makeDefs = function() {
 
-    // pZoo.mapObj.width = 760;
     pZoo.mapObj.width = 600;
-
-    // pZoo.mapObj.height = 1060;
     pZoo.mapObj.height = 800;
 
     pZoo.mapObj.subunits = topojson.feature(
@@ -53,9 +50,6 @@ var div = d3.select("body").append("div")
     .style("opacity", 0);
 
 
-// part of on-page-load setup;
-// creates the SVG HTML element that will be the target for drawing
-// makeDefs() -> THIS -> drawMap()
 var createNewMapSVG = function() {
 
     // create the SVG element that will hold the map
@@ -67,9 +61,6 @@ var createNewMapSVG = function() {
 };
 
 
-// part of on-page-load setup;
-// draws map shapes
-// createNewMapSVG -> THIS -> drawLabels()
 var drawMap = function() {
 
     d3.select("body").select('svg').selectAll('.subunit')
@@ -82,19 +73,12 @@ var drawMap = function() {
         .append("path")
         .attr("class", function(d) { return "subunit " + d.id; })
         .attr("d", pZoo.mapObj.path);
-
-    drawLabels();
 };
 
 
-// part of on-page-load setup;
-// draws map shapes
-// drawMap() -> THIS
 var drawLabels = function() {
 
-    if ( $.isEmptyObject(pZoo.mapObj.dat) === false ) {
-
-        d3.select('map-content').select('svg').selectAll(".subunit-label")
+        d3.select('.map-content').select('svg').selectAll(".subunit-label")
             .data(
                 topojson
                 .feature(pZoo.mapObj.dat, pZoo.mapObj.dat.objects.subunits)
@@ -109,7 +93,6 @@ var drawLabels = function() {
             })
             .attr("dy", ".35em")
             .text(function(d) { return d.properties.name; });
-    }
 };
 
 
@@ -148,18 +131,11 @@ var plotFamily = function() {
 };
 
 
-var clearLabels = function() {
-
-    if ( $.isEmptyObject(pZoo.mapObj.dat) === false ) {
-
-        d3.selectAll(".country-label").remove();
-    }
-};
+////////////////////////////////////////////////////////////////
+// POPULATION HISTOGRAM
+////////////////////////////////////////////////////////////////
 
 
-// part of on-page-load setup;
-// reads data from json file, stores it in pZoo.popObj namespace
-// THIS -> createNewPopSVG()
 var loadPopData = function() {
 
     d3.json("/static/js/histogram/acPaccPockS.json", function(error, aberP) {
@@ -173,24 +149,17 @@ var loadPopData = function() {
 };
 
 
-// part of on-page-load setup;
-// defines some vars to be stored in pZoo.popObj namespace;
-// creates SVG HTML element to be targeted by draw functions
-// loadPopData() -> THIS -> drawPopHisto()
 var createNewPopSVG = function() {
 
     pZoo.popObj.margin = {top: 10, right: 30, bottom: 30, left: 30};
-    // pZoo.popObj.width = 760 - pZoo.popObj.margin.left - pZoo.popObj.margin.right;
     pZoo.popObj.width = 600 - pZoo.popObj.margin.left - pZoo.popObj.margin.right;
-    pZoo.popObj.height = 400 - pZoo.popObj.margin.top - pZoo.popObj.margin.bottom;
+    pZoo.popObj.height = 300 - pZoo.popObj.margin.top - pZoo.popObj.margin.bottom;
 
     var svg = d3.select(".pop-content").append("svg")
         .attr("width", pZoo.popObj.width + pZoo.popObj.margin.left + pZoo.popObj.margin.right)
         .attr("height", pZoo.popObj.height + pZoo.popObj.margin.top + pZoo.popObj.margin.bottom)
         .append("g")
         .attr("transform", "translate(" + pZoo.popObj.margin.left + "," + pZoo.popObj.margin.top + ")");
-
-    // drawPopHisto();
 };
 
 
@@ -200,6 +169,7 @@ var drawPopHisto = function() {
     d3.select('.pop-content').selectAll('.bar').remove();
     d3.select('.pop-content').selectAll('text').remove();
 
+    // if our response contains no data (= is an error), we don't want to draw anything
     if ($.isEmptyObject(pZoo.popObj.response.error)) {
 
         // configure data
@@ -217,15 +187,11 @@ var drawPopHisto = function() {
             .domain([d3.max(binnedVals, function(d) { return d.y; }), 0])
             .range([pZoo.popObj.height - (2 * pZoo.popObj.margin.top), 0]);
 
-        // var tempScale = d3.scale.linear().domain([0, bins]).range([lowerBand, upperBand]);
-        // var tickArray = d3.range(bins + 1).map(tempScale);
-
         // configure axes (just x-axis, no y-axis)
         var xAxis = d3.svg.axis()
             .scale(xScale)
             .orient('bottom')
             .tickValues(thresholds);
-            // .tickValues([0, 1000, 2000, 5000, 10000, 100000]);
 
         // DRAW, PILGRIM!
         // draw the 'bar' elements
@@ -261,13 +227,94 @@ var drawPopHisto = function() {
 };
 
 
-var createSliders = function() {
+////////////////////////////////////////////////////////////////
+// ELEVATION HISTOGRAM
+////////////////////////////////////////////////////////////////
 
-    d3.select('.sidebar-content')
-        .append('slider')
-        .slider()
-        .orientation('vertical');
+
+var createNewElevSVG = function() {
+
+    pZoo.elevObj.margin = {top: 10, right: 30, bottom: 30, left: 30};
+    pZoo.elevObj.width = 600 - pZoo.elevObj.margin.left - pZoo.elevObj.margin.right;
+    pZoo.elevObj.height = 300 - pZoo.elevObj.margin.top - pZoo.elevObj.margin.bottom;
+
+    var svg = d3.select(".elev-content").append("svg")
+        .attr("width", pZoo.elevObj.width + pZoo.elevObj.margin.left + pZoo.elevObj.margin.right)
+        .attr("height", pZoo.elevObj.height + pZoo.elevObj.margin.top + pZoo.elevObj.margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + pZoo.elevObj.margin.left + "," + pZoo.elevObj.margin.top + ")");
 };
+
+
+var drawElevHisto = function() {
+
+    // remove old display contents
+    d3.select('.elev-content').selectAll('.bar').remove();
+    d3.select('.elev-content').selectAll('text').remove();
+
+    // if our response contains no data (= is an error), we don't want to draw anything
+    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+
+        // configure data
+        dat = pZoo.popObj.response.fam_df;
+        var origVals = [];
+        for (i = 0; i < dat.length; i++) { origVals.push(dat[i].delev); }
+        var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
+        var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
+
+        console.log(binnedVals);
+
+        // configure scales
+        var xScale = d3.scale.ordinal()
+            .domain(thresholds)
+            .rangeRoundBands([0, pZoo.elevObj.width], 0.2, 0.6);
+        var yScale = d3.scale.linear()
+            .domain([d3.max(binnedVals, function(d) { return d.y; }), 0])
+            .range([pZoo.elevObj.height - (2 * pZoo.elevObj.margin.top), 0]);
+
+        // configure axes (just x-axis, no y-axis)
+        var xAxis = d3.svg.axis()
+            .scale(xScale)
+            .orient('bottom')
+            .tickValues(thresholds);
+
+        // DRAW, PILGRIM!
+        // draw the 'bar' elements
+        var bar = d3.select('.elev-content').select('svg').selectAll('.bar')
+            .data(binnedVals)
+            .enter()
+            .append('g')
+            .attr('class', 'bar')
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+
+        // draw the rectangles - these are the actual visualization bits
+        bar.append('rect')
+            .attr('y', function(d) { return pZoo.elevObj.height - yScale(d.y); })
+            .attr('width', xScale.rangeBand())
+            .attr('height', function(d) { return yScale(d.y); });
+
+        // draw the axes
+        d3.select('.elev-content').select('svg')
+            .append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(' + xScale.rangeBand() / 1.6 + ', ' + pZoo.elevObj.height + ')')
+            .call(xAxis);
+
+        // configure and draw text labels
+        var formatCount = d3.format(",.0f");
+        bar.append("text")
+            .attr("dy", ".75em")
+            .attr('y', function(d) { return pZoo.elevObj.height - yScale(d.y) - 10; })
+            .attr('transform', function(d) { return 'translate(' + xScale.rangeBand() / 2 + ', 0)'; })
+            .attr("text-anchor", "middle")
+            .text(function(d) { return formatCount(d.y); });
+    }
+};
+
+
+////////////////////////////////////////////////////////////////
+// SEARCH FUNCTION
+////////////////////////////////////////////////////////////////
 
 
 var doSearch = function(url, query) {
@@ -293,10 +340,17 @@ var doSearch = function(url, query) {
         pZoo.popObj.response = response;
         plotFamily();
         drawPopHisto();
+        drawElevHisto();
     }).fail(function(a,b,c) {
         alert('foo');
     });
 };
+
+
+////////////////////////////////////////////////////////////////
+// TEXT FORMATTING
+////////////////////////////////////////////////////////////////
+
 
 var showNameFamInfo = function(response) {
     $("#placename").text(response.name);
@@ -311,6 +365,7 @@ var showNameFamInfo = function(response) {
     );
 };
 
+
 var showNameKeyInfo = function(response) {
     $("#placename").text(response.namefam_dict.human_namekey);
     $("#namefam-info").text(
@@ -322,10 +377,12 @@ var showNameKeyInfo = function(response) {
     );
 };
 
+
 var showErrorSheep = function(response) {
     $("#placename").text(response.error);
     $("#namefam-info").empty();
 };
+
 
 var showRowInfo = function(response) {
     $("#placename").text(response.name);
@@ -333,10 +390,16 @@ var showRowInfo = function(response) {
 };
 
 
+////////////////////////////////////////////////////////////////
+// ON PAGE LOAD
+////////////////////////////////////////////////////////////////
+
+
 $( document ).ready( function() {
 
     loadMapData();
     createNewPopSVG();
+    createNewElevSVG();
     doSearch('/search/', 'ashley');
 
     $('#search').submit(function(e) {
