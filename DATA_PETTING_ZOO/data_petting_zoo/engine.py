@@ -224,8 +224,7 @@ def query_random(df):
     df = df.copy()
     namekeys = name_rules.keys()
     namekey = sample(namekeys, 1)[0]
-
-    subdf = get_fam(df, namekey)
+    subdf = get_fam(df, namekey)[0]
     placename = subdf['name'].sample().values[0]
     return subdf, namekey, placename
 
@@ -267,7 +266,7 @@ def query_placename(df, placestring):
     # An ugly way to get the string out
     namekey = namekey.values[0][0]
     placename = namefam_row['name']
-    return get_fam(df, namekey), namekey, placename.values[0]
+    return get_fam(df, namekey)[0], namekey, placename.values[0]
 
 
 def query_name_or_fam(df, placestring):
@@ -323,11 +322,6 @@ def query_namefam_table(namekey):
         if pd.isnull(val):
             val = None
         toreturn[colname] = val
-    # toreturn['wiki_codes'] = wiki_str.rstrip(", ")
-    # toreturn['namekey'] = row['namekey'].values[0]
-    # toreturn['humandef'] = row['humandef'].values[0]
-    # toreturn['lan_notes'] = row['lan_notes'].values[0]
-    # toreturn['human_namekey'] = row['human_namekey'].values[0]
     return toreturn
 
 

@@ -340,7 +340,7 @@ $( document ).ready( function() {
 
     loadMapData();
     createNewPopSVG();
-    doSearch('ashley');
+    doSearch('/search/', 'ashley');
 
     $('#search').submit(function(e) {
 
