@@ -319,7 +319,10 @@ var doSearch = function(url, query) {
         dataType: 'json',
         url: url + query,
     }).done(function(response) {
-        if (query === response['namefam_dict']['namekey']) {
+        if (response['error']) {
+            showErrorSheep(response);
+        }
+        else if (query === response['namefam_dict']['namekey']) {
             showNameKeyInfo(response);
         }
         else {
@@ -344,6 +347,11 @@ var showNameKeyInfo = function(response) {
     $("#placename").text(response['namefam_dict']['human_namekey']);
     $("#namefam-info").text("This form means " + response['namefam_dict']['humandef'] + ". It originates from " +
         response['namefam_dict']['wiki_codes']);
+}
+
+var showErrorSheep = function(response) {
+    $("#placename").text(response['error']);
+    $("#namefam-info").empty();
 }
 
 
