@@ -1,6 +1,6 @@
 
 import pytest
-from ..engine import patinls, patinstr, set_gb, set_fam, set_alt, get_fam
+from ..engine import patinls, patinstr, set_gb, set_fam, set_alt, get_fam, query_name
 from ..rules import name_rules
 import numpy as np
 import pandas as pd
@@ -69,26 +69,26 @@ def test_string_nan():
 
 
 def test_set_fam():
-    df_head = set_gb('gb_filtered.csv')
+    df_head = set_gb('gb_part.csv')
     df_fam_head = set_fam(df_head)
     assert 'ls_namefam' in df_fam_head.columns
 
 
 def test_hasparent():
-    df_head = set_gb('gb_filtered.csv')
+    df_head = set_gb('gb_part.csv')
     df_alt_head = set_alt(set_fam(df_head))
     assert 'parent' in df_alt_head.columns
 
 
 def test_not_have_altname():
-    df_head = set_gb('gb_filtered.csv').head()
+    df_head = set_gb('gb_part.csv').head()
     df_alt_head = set_alt(set_fam(df_head))
     assert 'altname' not in df_alt_head.columns
     assert 'ls_altname' not in df_alt_head.columns
 
 
 def test_parent():
-    df_head = set_gb('gb_filtered.csv').head()
+    df_head = set_gb('gb_part.csv').head()
     df_fam_head = set_fam(df_head)
     df_alt_head = set_alt(df_fam_head)
     last_alt_head = df_alt_head.ix[5:, :]
@@ -111,7 +111,7 @@ def test_parent():
 
 
 def test_alt_hasnot_parent():
-    df_head = set_gb('gb_filtered.csv').head()
+    df_head = set_gb('gb_part.csv').head()
     df_fam_head = set_fam(df_head)
     df_alt_head = set_alt(df_fam_head)
     for index, row in df_alt_head.iterrows():
@@ -128,7 +128,7 @@ def test_alt_hasnot_parent():
 # #     assert math.isnan(df_alt_head.ix[0, 'parent']) is True
 
 def test_alt_has_parent():
-    df_head = set_gb('gb_filtered.csv').head()
+    df_head = set_gb('gb_part.csv').head()
     df_fam_head = set_fam(df_head)
     df_alt_head = set_alt(df_fam_head)
     last_alt_head = df_alt_head.ix[5:, :]
@@ -137,7 +137,7 @@ def test_alt_has_parent():
 
 
 def test_alt_row():
-    df_head = set_gb('gb_filtered.csv').head()
+    df_head = set_gb('gb_part.csv').head()
     df_fam_head = set_fam(df_head)
     df_alt_head = set_alt(df_fam_head)
     assert df_alt_head.ix[0, 'name'] == df_fam_head.ix[0, 'name']
@@ -145,7 +145,7 @@ def test_alt_row():
 
 
 def test_get_fam():
-    df_part = set_gb('gb_filtered.csv')
+    df_part = set_gb('gb_part.csv')
     df_fam = set_fam(df_part)
     df_worth = get_fam(df_fam, "worthSworthySwardineS")[0]
     for index, row in df_worth.iterrows():
@@ -153,6 +153,21 @@ def test_get_fam():
             m = match(regex, df_worth.ix[index, 'name'])
             if m is not None:
                 assert True
+
+def test_query_true():
+    df_part = set_gb('gb_part.csv')
+    query_zelah = query_name(df_part, 'Zelah')
+    query_zeals = query_name(df_part, 'Zeals')
+    assert query_zelah[0]
+    assert query_zeals[1]
+
+
+def test_query_false():
+    df_part = set_gb('gb_part.csv')
+    query_zelah = query_name(df_part, 'Zelah')
+    query_zeals = query_name(df_part, 'Zeals')
+    assert not query_zelah[1]
+    assert not query_zeals[0]
 
 # # def mlen(inlist):
 # #     try:
