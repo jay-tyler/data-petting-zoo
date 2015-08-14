@@ -1,16 +1,16 @@
 from re import match
 from random import sample
-from string import capwords, strip
+from string import capwords
 import pandas as pd
 import numpy as np
-from pandas import Series, DataFrame
+from pandas import DataFrame
 import fiona
 from shapely.geometry import Point, asShape
 from shapely.prepared import prep
 from shapely import speedups
 from rules import name_rules, geofeat_rules, wiki_codes
 
-DATA_ROOT = "" # TODO: wire this up
+DATA_ROOT = ""  # TODO: wire this up
 
 # Warn if a value is being assigned to a copy
 pd.set_option('mode.chained_assignment', 'warn')
@@ -26,18 +26,23 @@ try:
     NAMEFAM = pd.read_table("../../data/namefam.tab")
 except IOError:
     # TODO: In this case should do a bunch of stuff to get gb into namespace
-    pass
+    print 'oh no'
 
-### Setup Data Functions###
+
+################################
+# Setup Data Functions
+################################
 def set_gb(file_path):
     """Read the GB.txt file from geonames and return an appropriately
     filtered DataFrame"""
     gb = pd.read_csv(file_path)
     # Trim away an initial index column
     gb = gb.ix[:, 1:20]
-    column_names = ['geoid', 'name', 'asciiname', 'altname', 'lat', 'long',
+    column_names = [
+        'geoid', 'name', 'asciiname', 'altname', 'lat', 'long',
         'feature_class', 'feature_code', 'country_code', 'cc2', 'adm1', 'adm2',
-        'adm3', 'adm4', 'pop', 'elev', 'delev', 'timezone', 'moddate']
+        'adm3', 'adm4', 'pop', 'elev', 'delev', 'timezone', 'moddate'
+    ]
     gb.columns = column_names
     # Removing rows that correspond to Cyprus, N. Ireland, cruft etc.
     remove_these_adm1 = ['05', '00', '01', 'NIR', '03']
@@ -93,10 +98,12 @@ def set_alt(df, column_names=None):
     df_alt['parent'] = np.nan
 
     if column_names is None:
-        column_names = ['geoid', 'name', 'parent', 'asciiname', 'lat', 'long',
-                     'feature_class', 'feature_code', 'country_code', 'cc2',
-                     'adm1', 'adm2', 'adm3', 'adm4', 'pop', 'elev', 'delev',
-                     'timezone', 'moddate']
+        column_names = [
+            'geoid', 'name', 'parent', 'asciiname', 'lat', 'long',
+            'feature_class', 'feature_code', 'country_code', 'cc2',
+            'adm1', 'adm2', 'adm3', 'adm4', 'pop', 'elev', 'delev',
+            'timezone', 'moddate'
+        ]
     df_alt = df_alt[column_names]
 
     i = len(df)
@@ -125,8 +132,8 @@ def set_namefam_table(file_path):
 def append_nuts3_region(dfin, shapefile_path):
     """ Take a pandas dataframe with lat and long columns and a shapefile.
     Convert coordinates to Shapely points to do a point-in-polygon check
-    for each point. Append name of nuts3 region corresponding to point-in-polygon
-    to the dataframe.
+    for each point. Append name of nuts3 region corresponding to
+    point-in-polygon to the dataframe.
     This is extremely slow. Needs to be optimized with Shapely boundary box.
     """
     df = dfin.copy()
@@ -157,7 +164,9 @@ def append_2013_gva(dfin, csv_file_path):
     return df_gva
 
 
-### Helper Query Functions ###
+################################
+# Helper Query Functions
+################################
 def patinls(slist, patlist):
     """Search each string in slist for a substring instance defined by patlist;
     return re.match if found, None if not found"""
@@ -190,7 +199,9 @@ def patinstr(string, patlist):
     return found
 
 
-### DataFrame Query Functions ###
+################################
+# DataFrame Query Functions
+################################
 def get_fam(df, namekey):
     """Return a (sub-dataframe, namekey, placename) corresponding to a
     particular namefamily. Will return None for placename from that
@@ -235,7 +246,7 @@ def query_name(df, placestring):
 
 
 def query_placename(df, placestring):
-    """Attempt to match placestring to a city with a family pattern; 
+    """Attempt to match placestring to a city with a family pattern;
     return the matching sub-DataFrame, namekey, and full placename if a match
     is made, else None
 
@@ -294,7 +305,7 @@ def query_namefam_table(namekey):
     a namefam table in human readable string format"""
     row = NAMEFAM[NAMEFAM['namekey'] == namekey]
     if row.shape[0] == 0:
-    # Case of asking for a namekey that doesn't exist
+        # Case of asking for a namekey that doesn't exist
         return None
     toreturn = dict()
 
@@ -304,12 +315,13 @@ def query_namefam_table(namekey):
         frag = wiki_codes.get(code.rstrip(',').lstrip())
         frag = frag if frag is not None else ""
         wiki_str += "{}, ".format(frag)
-    # Maybe refactor these iteratively later
-    toreturn['wiki_codes'] = wiki_str.rstrip(", ")
-    toreturn['namekey'] = row['namekey'].values[0]
-    toreturn['humandef'] = row['humandef'].values[0]
-    toreturn['lan_notes'] = row['lan_notes'].values[0]
-    toreturn['human_namekey'] = row['human_namekey'].values[0]
+    wiki_str = wiki_str.rstrip(", ")
+    toreturn['wiki_codes'] = wiki_str
+    for colname in ['namekey', 'humandef', 'lan_notes', 'human_namekey']:
+        val = row[colname].values[0]
+        if pd.isnull(val):
+            val = None
+        toreturn[colname] = val
     return toreturn
 
 

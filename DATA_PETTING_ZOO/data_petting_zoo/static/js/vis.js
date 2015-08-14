@@ -163,7 +163,7 @@ var plotFamily = function(response) {
     d3.select('.map-content').selectAll('circle').remove();
 
     d3.select(".map-content").select("svg").selectAll("circle")
-        .data($.parseJSON(response))
+        .data(response['fam_df'])
         .enter()
         .append("circle")
         .attr("cx", function(d) {
@@ -244,11 +244,13 @@ var drawPopHisto = function(response) {
     pZoo.popObj.response = response;
 
     // configure data
-    var parsed = $.parseJSON(response);
+    var parsed = response;
     var origVals = [];
     for (i = 0; i < parsed.length; i++) { origVals.push(parsed[i].pop); }
-    var thresholds = [0, 1, 1000, 2000, 5000, 10000, 100000, 200000];
+    var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
     var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
+
+    console.log(binnedVals);
 
     // configure scales
     var xScale = d3.scale.ordinal()
@@ -256,7 +258,7 @@ var drawPopHisto = function(response) {
         .rangeRoundBands([0, pZoo.popObj.width], 0.2, 0.6);
     var yScale = d3.scale.linear()
         .domain([d3.max(binnedVals, function(d) { return d.y; }), 0])
-        .range([pZoo.popObj.height, 0]);
+        .range([pZoo.popObj.height - (2 * pZoo.popObj.margin.top), 0]);
 
     // var tempScale = d3.scale.linear().domain([0, bins]).range([lowerBand, upperBand]);
     // var tickArray = d3.range(bins + 1).map(tempScale);
@@ -264,7 +266,9 @@ var drawPopHisto = function(response) {
     // configure axes (just x-axis, no y-axis)
     var xAxis = d3.svg.axis()
         .scale(xScale)
-        .orient('bottom');
+        .orient('bottom')
+        .tickValues(thresholds);
+        // .tickValues([0, 1000, 2000, 5000, 10000, 100000]);
 
     // DRAW, PILGRIM!
     // draw the 'bar' elements
@@ -277,10 +281,6 @@ var drawPopHisto = function(response) {
 
     // draw the rectangles - these are the actual visualization bits
     bar.append('rect')
-
-        // .attr('x', '10')
-        // Not sure how to leverage this x-offset; I've managed to produce no noticeable results
-
         .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
         .attr('width', xScale.rangeBand())
         .attr('height', function(d) { return yScale(d.y); });
@@ -296,11 +296,7 @@ var drawPopHisto = function(response) {
     var formatCount = d3.format(",.0f");
     bar.append("text")
         .attr("dy", ".75em")
-        .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
-
-        // .attr("x", function(d) { return d[0] / 2; })
-        // again, still not sure how to leverage this x-offset yet
-
+        .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y) - 10; })
         .attr('transform', function(d) { return 'translate(' + xScale.rangeBand() / 2 + ', 0)'; })
         .attr("text-anchor", "middle")
         .text(function(d) { return formatCount(d.y); });
@@ -316,16 +312,18 @@ var createSliders = function() {
 };
 
 
-var initialSearch = function() {
+var doSearch = function(url, query) {
 
     $.ajax({
         type: "GET",
-        url: "/search/ashley",
+        dataType: 'json',
+        url: url + query,
     }).done(function(response) {
         plotFamily(response);
         drawPopHisto(response);
+    }).fail(function(a,b,c) {
+        alert('foo');
     });
-
 };
 
 
@@ -333,18 +331,19 @@ $( document ).ready( function() {
 
     loadMapData();
     createNewPopSVG();
-    initialSearch();
+    doSearch('ashley');
 
     $('#search').submit(function(e) {
-        e.preventDefault();
 
-        $.ajax({
-            type: "GET",
-            url: "/search/" + $("#query").val(),
-        }).done(function(response) {
-            plotFamily(response);
-            drawPopHisto(response);
-        });
+        e.preventDefault();
+        doSearch('/search/', $('#query').val());
 
     });
+
+    $('#dropdown').on('change', function() {
+
+        doSearch('/dropdown/', this.value);
+
+    });
+
 });
