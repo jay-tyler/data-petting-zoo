@@ -1,6 +1,6 @@
 
 import pytest
-from ..engine import patinls, patinstr, set_gb, set_fam, set_alt, get_fam, query_name
+from ..engine import patinls, patinstr, set_gb, set_fam, set_alt, get_fam, query_name, query_placename
 from ..rules import name_rules
 import numpy as np
 import pandas as pd
@@ -169,12 +169,23 @@ def test_query_name_false():
     assert not query_zelah[1]
     assert not query_zeals[0]
 
-# def test_query_placename_true():
-#     df_part = set_gb('gb_part.csv')
-#     query_zelah = query_name(df_part, 'Zelah')
-#     query_zeals = query_name(df_part, 'Zeals')
-#     assert query_zelah[0]
-#     assert query_zeals[1]
+
+def test_query_placename_match():
+    df_part = set_gb('gb_part.csv')
+    df_fam = set_fam(df_part)
+    query_yerverton = query_placename(df_fam, 'Yelverton')[0]
+    for index, row in query_yerverton.iterrows():
+        for regex in name_rules:
+            m = match(regex, query_yerverton.ix[index, 'name'])
+            if m is not None:
+                assert True
+
+
+def test_query_placename_not_match():
+    df_part = set_gb('gb_part.csv')
+    df_fam = set_fam(df_part)
+    if not query_placename(df_fam, 'xyz'):
+        assert True
 
 
 # # def mlen(inlist):
