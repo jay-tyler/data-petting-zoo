@@ -3,7 +3,7 @@ import pandas as pd
 from engine import query_name_or_fam, query_namefam_table, get_fam
 
 
-gb = pd.read_pickle("../data/pickles/gb13.pk1")
+gb = pd.read_pickle("../data/pickles/gb_final.pk1")
 NAMEFAM = pd.read_table("../data/namefam.tab")
 
 

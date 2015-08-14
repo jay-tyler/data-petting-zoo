@@ -36,7 +36,6 @@ body {
 }
 
 .bar rect {
-  fill: steelblue;
   shape-rendering: crispEdges;
 }
 
@@ -44,8 +43,18 @@ body {
   fill: #000;
 }
 
-.axis path, .axis line {
+.axis path,
+.axis line {
   fill: none;
   stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.pop-content .bar rect {
+  fill: lightsteelblue;
+}
+
+.elev-content .bar rect {
+  fill: #ADB8C2;
   shape-rendering: crispEdges;
 }
