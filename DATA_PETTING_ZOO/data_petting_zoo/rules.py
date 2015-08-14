@@ -44,7 +44,7 @@ name_rules = {
     "dolPdullA": ("(.*\s*Dol.*)", "(.*Dull.*)"),
     "donSdenS": ("(.*\w+don($|[\s+.*]))", "(.*\w+den($|[\s+.*]))"),
     "drumP": ("(.*\s*Drum.*)",),
-    "dubhSdubhPdubhAdowQdhuQduffQ": ("(.*Dubh.*)", "(.*[Dd]ow.*)", "(.*[Dd]hu.*)", "(.*[Dd]uff.*)"),
+    "dubhSdubhPdubhAdowQdhuQduffQ": ("(.*dubh.*)", "(.*[Dd]ow.*)", "(.*[Dd]hu.*)", "(.*[Dd]uff.*)"),
     "dunPdumPdonPdouneP": ("(.*\s*Dun.*)", "(.*\s*Dum.*)", "(.*\s*Don.*)", "(.*\s*Doune.*)"),
     "eaglesPeglosPeglewsPecclesP": ("(.*\s*Eagles.*)", "(.*\s*Eglos.*)", "(.*\s*Eccle.*)", "(.*\s*Eglews.*)"),
     "eilianA": ("(.*Eilian)",),
