@@ -85,6 +85,7 @@ name_rules = {
     "langP": ("(.*\s*Lang.*)",),
     "lawQlowQ": ("(.*[Ll]aw.*)", "(.*[Ll]ow.*)"),
     "leI": ("(.+-le.+)",),
+    "leI": ("(.+-le-.+)",),
     "leaSleySleighSleighA": ("(.*\w+lea($|[\s+.*]))", "(.*\w+ley($|[\s+.*]))", "(.*\w+leigh($|[\s+.*]))", "(.*Leigh.*)"),
     "linPllynA": ("(.*\s*Lin.*)", "(.*Llyn.*)"),
     "lingPlyngP": ("(.*\s*ling.*)", "(.*\s*lyng.*)"),
