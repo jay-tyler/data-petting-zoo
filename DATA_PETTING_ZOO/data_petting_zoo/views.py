@@ -10,8 +10,6 @@ NAMEFAM = pd.read_table("../data/namefam.tab")
 @view_config(route_name='search',
              xhr=True,
              renderer='json')
-@view_config(route_name='place',
-             renderer='templates/home.jinja2')
 @view_config(route_name='home',
              renderer='templates/home.jinja2')
 def home_view(request):
@@ -40,8 +38,6 @@ def home_view(request):
                         'name': placename,
                         'message': 'Does not belong to a known family of names.'}
             namefam_dict = query_namefam_table(namekey)
-        # if place doesn't have a family name - return place row, plot
-        # point
 
         return {'fam_df': fam_df.fillna(0),
                 'namefam_dict': namefam_dict,
