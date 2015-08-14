@@ -134,7 +134,7 @@ Left-Side Container
 ********************************/
 
 .left-side-container {
-    width: 48%;
+    width: 40%;
     margin: auto;
     display: inline-block;
     text-align: center;
@@ -150,6 +150,12 @@ Right-Side Container
     display: inline-block;
     vertical-align: top;
     text-align: center;
+}
+
+.pop-title,
+.elev-title,
+.gva-title {
+    margin: -30px 0 40px;
 }
 
 /********************************

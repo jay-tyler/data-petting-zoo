@@ -55,6 +55,9 @@ body {
 }
 
 .elev-content .bar rect {
-  fill: #ADB8C2;
-  shape-rendering: crispEdges;
+  fill: #daa5a5;
+}
+
+.gva-content .bar rect {
+  fill: #b8d8b8;
 }
