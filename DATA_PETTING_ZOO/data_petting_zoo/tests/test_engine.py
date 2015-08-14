@@ -189,13 +189,22 @@ def test_query_placename_not_match():
         assert True
 
 
-def query_pop_slice():
-    df_part = set_gb('gb_part.csv')
-    df_fam = set_fam(df_part)
-    query_1000 = query_pop_slice(df_fam, 10000)[0]
-    for index, row in query_1000.iterrows():
-        if query_1000['pop'] >= 10000:
-                assert True
+# def test_query_pop_slice():
+#     df_part = set_gb('gb_part.csv')
+#     df_fam = set_fam(df_part)
+#     query_1000 = query_pop_slice(df_fam, 10000)
+#     for index, row in query_1000.iterrows():
+#         if query_1000['pop'].item() >= 10000:
+#                 assert True
+
+
+# def test_query_pop_slice_not():
+#     df_part = set_gb('gb_part.csv')
+#     df_fam = set_fam(df_part)
+#     query_1000 = query_pop_slice(df_fam, 8000)
+#     for index, row in query_1000.iterrows():
+#         if query_1000['pop'].item() >= 10000:
+#                 assert False
 
 
 
