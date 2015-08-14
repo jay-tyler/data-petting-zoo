@@ -35,6 +35,10 @@ def home_view(request):
             return {'error': 'Ba-a-a-a-a-a-a-a-a-ad query. Try again.'}
         else:
             fam_df, namekey, placename = query_name_or_fam(gb, name)
+            if namekey is None:
+                return {'fam_df': fam_df.fillna(0),
+                        'name': placename,
+                        'message': 'Does not belong to a known family of names.'}
             namefam_dict = query_namefam_table(namekey)
         # if place doesn't have a family name - return place row, plot
         # point
