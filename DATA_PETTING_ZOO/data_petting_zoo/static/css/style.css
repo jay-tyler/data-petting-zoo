@@ -111,6 +111,16 @@ Sidebar
 }
 
 /********************************
+NameFam Info
+********************************/
+
+#namefam-info-container {
+    text-align: left;
+    font-family: 'Libre Baskerville', serif;
+    color: #31383D;
+}
+
+/********************************
 Footer
 ********************************/
 

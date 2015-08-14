@@ -31,13 +31,8 @@ def home_view(request):
         # else, return all three as json obj
 
         return {'fam_df': fam_df.fillna(0),
-                'namefam_dict': namefam_dict}
-
-    # else:
-    #     place = gb.loc[gb['name'] == name]
-    #     place_zip = dict(zip(place.columns.values, place.values[0]))
-    #     place_json = json.dumps(place_zip)
-    #     return {'place': place_json}
+                'namefam_dict': namefam_dict,
+                'name': name}
 
 
 @view_config(route_name='about',
