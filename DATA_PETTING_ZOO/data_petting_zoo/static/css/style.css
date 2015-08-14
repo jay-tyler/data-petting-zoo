@@ -20,6 +20,10 @@ div {
     margin: auto;
 }
 
+body {
+  font: 10px sans-serif;
+}
+
 .clearfix {
     clear: both;
 }
@@ -61,12 +65,12 @@ Nav
     text-decoration: none;
 }
 
-#home_link {
+.nav #home_link {
     float: left;
     padding-left: 50px;
 }
 
-#about_link {
+.nav #about_link {
     float: right;
     padding-right: 50px;
 }
