@@ -154,7 +154,7 @@ def test_get_fam():
             if m is not None:
                 assert True
 
-def test_query_true():
+def test_query_name_true():
     df_part = set_gb('gb_part.csv')
     query_zelah = query_name(df_part, 'Zelah')
     query_zeals = query_name(df_part, 'Zeals')
@@ -162,12 +162,20 @@ def test_query_true():
     assert query_zeals[1]
 
 
-def test_query_false():
+def test_query_name_false():
     df_part = set_gb('gb_part.csv')
     query_zelah = query_name(df_part, 'Zelah')
     query_zeals = query_name(df_part, 'Zeals')
     assert not query_zelah[1]
     assert not query_zeals[0]
+
+# def test_query_placename_true():
+#     df_part = set_gb('gb_part.csv')
+#     query_zelah = query_name(df_part, 'Zelah')
+#     query_zeals = query_name(df_part, 'Zeals')
+#     assert query_zelah[0]
+#     assert query_zeals[1]
+
 
 # # def mlen(inlist):
 # #     try:

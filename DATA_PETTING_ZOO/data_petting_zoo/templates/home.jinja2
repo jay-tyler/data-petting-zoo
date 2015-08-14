@@ -19,58 +19,83 @@
 
 {% block main_content %}
 
-    <div id='body-container'>
+    <div class='querybar-container'>
+        <div class='querybar-content'>
 
-        <div class='map-container'>
-
-            <div class='map-heading'>
-                <h1>Great Britain</h1>
-                <div id="namefam-info-container">
-                    <h3 id="placename"></h3>
-                    <p id="namefam-info"></p>
-                </div>
-            </div>
-
-            <div class='map-content'>
-            </div>
-
-        </div>
-
-        <div class='pop-container'>
-
-            <div class='pop-heading'>
-                <h1>Population</h1>
-            </div>
-
-            <div class='pop-content'>
-            </div>
-
-        </div>
-
-        <div class='gdp-container'>
-
-            <div class='gdp-heading'>
-                <h1>GDP</h1>
-            </div>
-
-            <div class='gdp-content'>
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class='sidebar-container'>
-        <div class='sidebar-content'>
-            <h3>Search</h3>
+            <div class='search-container'>
+                <h3>Search</h3>
                 <form action="request.route_url('search', n" method="GET" id="search">
                     <input type="text" id="query" value="Ashley"></input>
                     <input type="submit" value="Search"></input>
                 </form>
+            </div>
+
+            <div class='dropdown-container'>
+                <h3>Name Families</h3>
+                <select id='dropdown'>
+                    <option>Select Pattern</option>
+                {% for i in menu_items %}
+                    <option value="{{ i[0] }}">{{ i[1] }}</option>
+                {% endfor %}
+                </select>
+            </div>
+
         </div>
     </div>
 
     <div class='clearfix'></div>
+
+    <div class='body-container'>
+
+
+        <div id="namefam-info-container">
+            <h1 id='placename'></h1>
+            <h2 id='namefam-info'></h2>
+        </div>
+
+
+        <div class='left-side-container'>
+
+            <div class='map-container'>
+
+                <div class='map-title'>
+                </div>
+
+                <div class='map-content'>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class='right-side-container'>
+
+            <div class='pop-container'>
+
+                <div class='pop-content'>
+                </div>
+
+                <div class='pop-title'>
+                    <h1>Population</h1>
+                </div>
+
+            </div>
+
+            <div class='gdp-container'>
+
+                <div class='gdp-content'>
+                </div>
+
+                <div class='gdp-title'>
+                    <h1>GDP</h1>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 {% endblock %}
 

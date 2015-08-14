@@ -25,9 +25,11 @@ var loadMapData = function() {
 // loadMapData() -> THIS -> createNewMapSVG()
 var makeDefs = function() {
 
-    pZoo.mapObj.width = 760;
+    // pZoo.mapObj.width = 760;
+    pZoo.mapObj.width = 600;
 
-    pZoo.mapObj.height = 1060;
+    // pZoo.mapObj.height = 1060;
+    pZoo.mapObj.height = 800;
 
     pZoo.mapObj.subunits = topojson.feature(
         pZoo.mapObj.dat, pZoo.mapObj.dat.objects.subunits
@@ -37,7 +39,7 @@ var makeDefs = function() {
         .center([2, 55.4])
         .rotate([4.4, 0])
         .parallels([50, 60])
-        .scale(5000)
+        .scale(4000)
         .translate([pZoo.mapObj.width / 2, pZoo.mapObj.height / 2]);
 
     pZoo.mapObj.path = d3.geo.path().projection(pZoo.mapObj.projection);
@@ -111,82 +113,38 @@ var drawLabels = function() {
 };
 
 
-// var plotCities = function() {
-//     d3.csv("/static/data/gb_noalt.csv", function(data) {
-//         d3.select(".map-content").select("svg").selectAll("circle")
-//         .data(data)
-//         .enter()
-//         .append("circle")
-//         .attr("cx", function(d) {
-//             return pZoo.mapObj.projection([d['long'], d['lat']])[0];
-//         })
-//         .attr("cy", function(d) {
-//             return pZoo.mapObj.projection([d['long'], d['lat']])[1];
-//         })
-//         .attr("r", 1)
-//         .style("fill", "grey")
-//         .style("opacity", 0.75)
-//     });
-// };
+var plotFamily = function() {
 
+    d3.select('.map-content').select("svg").selectAll('circle').remove();
 
-// var plotPlace = function() {
-//     d3.select(".map-content").select("svg").selectAll("circle")
-//         .data([place])
-//         .enter()
-//         .append("circle")
-//         .attr("cx", function(d) {
-//             return pZoo.mapObj.projection([d['long'], d['lat']])[0];
-//         })
-//         .attr("cy", function(d) {
-//             return pZoo.mapObj.projection([d['long'], d['lat']])[1];
-//         })
-//         .attr("r", 5)
-//         .style("fill", "grey")
-//         .on("mouseover", function(d)
-//             div.transition()
-//                 .duration(100)
-//                 .style("opacity", .9);
-//             div.html(d['name'])
-//                 .style("left", (d3.event.pageX) + "px")
-//                 .style("top", (d3.event.pageY - 28) + "px");
-//             })
-//         .on("mouseout", function(d) {
-//             div.transition()
-//                 .duration(500)
-//                 .style("opacity", 0);
-//         });
-// };
+    if ($.isEmptyObject(pZoo.popObj.response.error)) {
 
-var plotFamily = function(response) {
-
-    d3.select('.map-content').selectAll('circle').remove();
-
-    d3.select(".map-content").select("svg").selectAll("circle")
-        .data($.parseJSON(response))
-        .enter()
-        .append("circle")
-        .attr("cx", function(d) {
-            return pZoo.mapObj.projection([d.long, d.lat])[0];
-        })
-        .attr("cy", function(d) {
-            return pZoo.mapObj.projection([d.long, d.lat])[1];
-        })
-        .attr("r", 4)
-        .style("fill", "grey")
-        .on("mouseover", function(d) {
-            div.transition()
-                .duration(100)
-                .style("opacity", 0.9);
-            div.html(d.name)
-                .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+        d3.select(".map-content").select("svg").selectAll("circle")
+            .data(pZoo.popObj.response.fam_df)
+            .enter()
+            .append("circle")
+            .attr("cx", function(d) {
+                return pZoo.mapObj.projection([d.long, d.lat])[0];
             })
-        .on("mouseout", function(d) {
-            div.transition()
-                .duration(500)
-                .style("opacity", 0);
+            .attr("cy", function(d) {
+                return pZoo.mapObj.projection([d.long, d.lat])[1];
+            })
+            .attr("r", 4)
+            .style("fill", "grey")
+            .on("mouseover", function(d) {
+                div.transition()
+                    .duration(100)
+                    .style("opacity", 0.9);
+                div.html(d.name)
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+                })
+            .on("mouseout", function(d) {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
         });
+    }
 };
 
 
@@ -222,8 +180,9 @@ var loadPopData = function() {
 var createNewPopSVG = function() {
 
     pZoo.popObj.margin = {top: 10, right: 30, bottom: 30, left: 30};
-    pZoo.popObj.width = 760 - pZoo.popObj.margin.left - pZoo.popObj.margin.right;
-    pZoo.popObj.height = 500 - pZoo.popObj.margin.top - pZoo.popObj.margin.bottom;
+    // pZoo.popObj.width = 760 - pZoo.popObj.margin.left - pZoo.popObj.margin.right;
+    pZoo.popObj.width = 600 - pZoo.popObj.margin.left - pZoo.popObj.margin.right;
+    pZoo.popObj.height = 400 - pZoo.popObj.margin.top - pZoo.popObj.margin.bottom;
 
     var svg = d3.select(".pop-content").append("svg")
         .attr("width", pZoo.popObj.width + pZoo.popObj.margin.left + pZoo.popObj.margin.right)
@@ -235,75 +194,70 @@ var createNewPopSVG = function() {
 };
 
 
-var drawPopHisto = function(response) {
+var drawPopHisto = function() {
 
     // remove old display contents
     d3.select('.pop-content').selectAll('.bar').remove();
     d3.select('.pop-content').selectAll('text').remove();
 
-    pZoo.popObj.response = response;
+    if ($.isEmptyObject(pZoo.popObj.response.error)) {
 
-    // configure data
-    var parsed = $.parseJSON(response);
-    var origVals = [];
-    for (i = 0; i < parsed.length; i++) { origVals.push(parsed[i].pop); }
-    var thresholds = [0, 1, 1000, 2000, 5000, 10000, 100000, 200000];
-    var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
+        // configure data
+        dat = pZoo.popObj.response.fam_df;
+        var origVals = [];
+        for (i = 0; i < dat.length; i++) { origVals.push(dat[i].pop); }
+        var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
+        var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
-    // configure scales
-    var xScale = d3.scale.ordinal()
-        .domain(thresholds)
-        .rangeRoundBands([0, pZoo.popObj.width], 0.2, 0.6);
-    var yScale = d3.scale.linear()
-        .domain([d3.max(binnedVals, function(d) { return d.y; }), 0])
-        .range([pZoo.popObj.height, 0]);
+        // configure scales
+        var xScale = d3.scale.ordinal()
+            .domain(thresholds)
+            .rangeRoundBands([0, pZoo.popObj.width], 0.2, 0.6);
+        var yScale = d3.scale.linear()
+            .domain([d3.max(binnedVals, function(d) { return d.y; }), 0])
+            .range([pZoo.popObj.height - (2 * pZoo.popObj.margin.top), 0]);
 
-    // var tempScale = d3.scale.linear().domain([0, bins]).range([lowerBand, upperBand]);
-    // var tickArray = d3.range(bins + 1).map(tempScale);
+        // var tempScale = d3.scale.linear().domain([0, bins]).range([lowerBand, upperBand]);
+        // var tickArray = d3.range(bins + 1).map(tempScale);
 
-    // configure axes (just x-axis, no y-axis)
-    var xAxis = d3.svg.axis()
-        .scale(xScale)
-        .orient('bottom');
+        // configure axes (just x-axis, no y-axis)
+        var xAxis = d3.svg.axis()
+            .scale(xScale)
+            .orient('bottom')
+            .tickValues(thresholds);
+            // .tickValues([0, 1000, 2000, 5000, 10000, 100000]);
 
-    // DRAW, PILGRIM!
-    // draw the 'bar' elements
-    var bar = d3.select('.pop-content').select('svg').selectAll('.bar')
-        .data(binnedVals)
-        .enter()
-        .append('g')
-        .attr('class', 'bar')
-        .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+        // DRAW, PILGRIM!
+        // draw the 'bar' elements
+        var bar = d3.select('.pop-content').select('svg').selectAll('.bar')
+            .data(binnedVals)
+            .enter()
+            .append('g')
+            .attr('class', 'bar')
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
 
-    // draw the rectangles - these are the actual visualization bits
-    bar.append('rect')
+        // draw the rectangles - these are the actual visualization bits
+        bar.append('rect')
+            .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
+            .attr('width', xScale.rangeBand())
+            .attr('height', function(d) { return yScale(d.y); });
 
-        // .attr('x', '10')
-        // Not sure how to leverage this x-offset; I've managed to produce no noticeable results
+        // draw the axes
+        d3.select('.pop-content').select('svg')
+            .append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(' + xScale.rangeBand() / 1.6 + ', ' + pZoo.popObj.height + ')')
+            .call(xAxis);
 
-        .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
-        .attr('width', xScale.rangeBand())
-        .attr('height', function(d) { return yScale(d.y); });
-
-    // draw the axes
-    d3.select('.pop-content').select('svg')
-        .append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(' + xScale.rangeBand() / 1.6 + ', ' + pZoo.popObj.height + ')')
-        .call(xAxis);
-
-    // configure and draw text labels
-    var formatCount = d3.format(",.0f");
-    bar.append("text")
-        .attr("dy", ".75em")
-        .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y); })
-
-        // .attr("x", function(d) { return d[0] / 2; })
-        // again, still not sure how to leverage this x-offset yet
-
-        .attr('transform', function(d) { return 'translate(' + xScale.rangeBand() / 2 + ', 0)'; })
-        .attr("text-anchor", "middle")
-        .text(function(d) { return formatCount(d.y); });
+        // configure and draw text labels
+        var formatCount = d3.format(",.0f");
+        bar.append("text")
+            .attr("dy", ".75em")
+            .attr('y', function(d) { return pZoo.popObj.height - yScale(d.y) - 10; })
+            .attr('transform', function(d) { return 'translate(' + xScale.rangeBand() / 2 + ', 0)'; })
+            .attr("text-anchor", "middle")
+            .text(function(d) { return formatCount(d.y); });
+    }
 };
 
 
@@ -316,16 +270,66 @@ var createSliders = function() {
 };
 
 
-var initialSearch = function() {
+var doSearch = function(url, query) {
 
     $.ajax({
         type: "GET",
-        url: "/search/ashley",
+        dataType: 'json',
+        url: url + query,
     }).done(function(response) {
-        plotFamily(response);
-        drawPopHisto(response);
+        if (response.error) {
+            showErrorSheep(response);
+            pZoo.popObj.response = {};
+        }
+        else if (response.message) {
+            showRowInfo(response);
+        }
+        else if (query === response.namefam_dict.namekey) {
+            showNameKeyInfo(response);
+        }
+        else {
+            showNameFamInfo(response);
+        }
+        pZoo.popObj.response = response;
+        plotFamily();
+        drawPopHisto();
+    }).fail(function(a,b,c) {
+        alert('foo');
     });
+};
 
+var showNameFamInfo = function(response) {
+    $("#placename").text(response.name);
+    $("#namefam-info").text(
+        "Belongs to a family of names containing the following form: " +
+        response.namefam_dict.human_namekey +
+        ", which means " +
+        response.namefam_dict.humandef +
+        ". This form originates from " +
+        response.namefam_dict.wiki_codes +
+        "."
+    );
+};
+
+var showNameKeyInfo = function(response) {
+    $("#placename").text(response.namefam_dict.human_namekey);
+    $("#namefam-info").text(
+        "This name form means " +
+        response.namefam_dict.humandef +
+        ". It originates from " +
+        response.namefam_dict.wiki_codes +
+        '.'
+    );
+};
+
+var showErrorSheep = function(response) {
+    $("#placename").text(response.error);
+    $("#namefam-info").empty();
+};
+
+var showRowInfo = function(response) {
+    $("#placename").text(response.name);
+    $("#namefam-info").text(response.message);
 };
 
 
@@ -333,18 +337,19 @@ $( document ).ready( function() {
 
     loadMapData();
     createNewPopSVG();
-    initialSearch();
+    doSearch('/search/', 'ashley');
 
     $('#search').submit(function(e) {
-        e.preventDefault();
 
-        $.ajax({
-            type: "GET",
-            url: "/search/" + $("#query").val(),
-        }).done(function(response) {
-            plotFamily(response);
-            drawPopHisto(response);
-        });
+        e.preventDefault();
+        doSearch('/search/', $('#query').val());
 
     });
+
+    $('#dropdown').on('change', function() {
+
+        doSearch('/dropdown/', this.value);
+
+    });
+
 });
