@@ -336,6 +336,7 @@ var doSearch = function(url, query) {
         dataType: 'json',
         url: url + query,
     }).done(function(response) {
+        $("#query").val('');
         if (response.error) {
             showErrorSheep(response);
             pZoo.popObj.response = {};
