@@ -1,8 +1,10 @@
 
 import pytest
-from ..engine import patinls, patinstr, set_gb, set_fam, set_alt
+from ..engine import patinls, patinstr, set_gb, set_fam, set_alt, get_fam
+from ..rules import name_rules
 import numpy as np
 import math
+from re import match
 
 
 
@@ -141,6 +143,16 @@ def test_alt_row():
     assert df_alt_head.ix[0, 'name'] == df_fam_head.ix[0, 'name']
     assert math.isnan(df_alt_head.ix[0, 'parent'])
 
+
+def test_get_fam():
+    df_part = set_gb('../../data/pristine/NEWGB.csv').ix[1:200, :]
+    df_fam = set_fam(df_part)
+    df_worth = get_fam(df_fam, "worthSworthySwardineS")[0]
+    for index, row in df_worth.iterrows():
+        for regex in name_rules["worthSworthySwardineS"]:
+            m = match(regex, df_worth.ix[index, 'name'])
+            if m is not None:
+                assert True
 
 # def mlen(inlist):
 #     try:
