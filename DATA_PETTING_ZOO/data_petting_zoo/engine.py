@@ -192,8 +192,9 @@ def patinstr(string, patlist):
 
 ### DataFrame Query Functions ###
 def get_fam(df, namekey):
-    """Get dataframe subset from df for rows belonging to the family
-    which is a sub"""
+    """Return a (sub-dataframe, namekey, placename) corresponding to a
+    particular namefamily. Will return None for placename from that
+    namefamily"""
     def _droidfind(listin):
         result = None
         try:
@@ -202,7 +203,7 @@ def get_fam(df, namekey):
             pass
         return result if result is True else None
     mask = df['ls_namefam'].map(lambda x: _droidfind(x))
-    return df[~mask.isnull()]
+    return df[~mask.isnull()], namekey, None
 
 
 def query_random(df):
