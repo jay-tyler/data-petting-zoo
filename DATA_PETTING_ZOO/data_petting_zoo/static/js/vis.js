@@ -312,12 +312,12 @@ var createSliders = function() {
 };
 
 
-var doSearch = function(query) {
+var doSearch = function(url, query) {
 
     $.ajax({
         type: "GET",
         dataType: 'json',
-        url: "/search/" + query,
+        url: url + query,
     }).done(function(response) {
         plotFamily(response);
         drawPopHisto(response);
@@ -336,13 +336,13 @@ $( document ).ready( function() {
     $('#search').submit(function(e) {
 
         e.preventDefault();
-        doSearch($('#query').val());
+        doSearch('/search/', $('#query').val());
 
     });
 
     $('#dropdown').on('change', function() {
 
-        doSearch(this.value);
+        doSearch('/dropdown/', this.value);
 
     });
 
