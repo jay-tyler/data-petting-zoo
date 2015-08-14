@@ -17,13 +17,13 @@ pd.set_option('mode.chained_assignment', 'warn')
 
 # Imports of needed data
 try:
-    GB = pd.read_pickle("../../data/pickles/gb.pk1")
+    GB = pd.read_pickle("../data/pickles/gb.pk1")
 except IOError:
     # TODO: In this case should do a bunch of stuff to get gb into namespace
     pass
 
 try:
-    NAMEFAM = pd.read_table("../../data/namefam.tab")
+    NAMEFAM = pd.read_table("../data/namefam.tab")
 except IOError:
     # TODO: In this case should do a bunch of stuff to get gb into namespace
     print 'oh no'
