@@ -31,10 +31,6 @@ div.tooltip {
 Histogram Styles
 ********************************/
 
-body {
-  font: 10px sans-serif;
-}
-
 .bar rect {
   shape-rendering: crispEdges;
 }
