@@ -160,7 +160,7 @@ var drawLabels = function() {
 
 var plotFamily = function(response) {
 
-    d3.select('.map-content').selectAll('circle').remove();
+    d3.select('.map-content').select("svg").selectAll('circle').remove();
 
     d3.select(".map-content").select("svg").selectAll("circle")
         .data(response['fam_df'])
@@ -319,11 +319,20 @@ var doSearch = function(url, query) {
         dataType: 'json',
         url: url + query,
     }).done(function(response) {
+        showNameFamInfo(response);
         plotFamily(response);
         drawPopHisto(response);
     }).fail(function(a,b,c) {
         alert('foo');
     });
+};
+
+var showNameFamInfo = function(response) {
+    $("#placename").text(response['name']);
+    $("#namefam-info").text( "Belongs to a family of names containing the following form: " +
+        response['namefam_dict']['human_namekey'] + ", which means " +
+        response['namefam_dict']['humandef'] + ". This form originates from " + 
+        response['namefam_dict']['wiki_codes'] + ".")
 };
 
 
