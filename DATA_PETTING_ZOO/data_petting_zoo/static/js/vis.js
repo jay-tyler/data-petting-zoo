@@ -2,6 +2,7 @@ var pZoo = {
     'mapObj': {},
     'popObj': {},
     'elevObj': {},
+    'gvaObj': {},
 };
 
 
@@ -153,7 +154,7 @@ var createNewPopSVG = function() {
 
     pZoo.popObj.margin = {top: 10, right: 30, bottom: 30, left: 30};
     pZoo.popObj.width = 600 - pZoo.popObj.margin.left - pZoo.popObj.margin.right;
-    pZoo.popObj.height = 300 - pZoo.popObj.margin.top - pZoo.popObj.margin.bottom;
+    pZoo.popObj.height = 200 - pZoo.popObj.margin.top - pZoo.popObj.margin.bottom;
 
     var svg = d3.select(".pop-content").append("svg")
         .attr("width", pZoo.popObj.width + pZoo.popObj.margin.left + pZoo.popObj.margin.right)
@@ -243,7 +244,7 @@ var createNewElevSVG = function() {
 
     pZoo.elevObj.margin = {top: 10, right: 30, bottom: 30, left: 30};
     pZoo.elevObj.width = 600 - pZoo.elevObj.margin.left - pZoo.elevObj.margin.right;
-    pZoo.elevObj.height = 300 - pZoo.elevObj.margin.top - pZoo.elevObj.margin.bottom;
+    pZoo.elevObj.height = 200 - pZoo.elevObj.margin.top - pZoo.elevObj.margin.bottom;
 
     var svg = d3.select(".elev-content").append("svg")
         .attr("width", pZoo.elevObj.width + pZoo.elevObj.margin.left + pZoo.elevObj.margin.right)
@@ -325,6 +326,97 @@ var drawElevHisto = function() {
 
 
 ////////////////////////////////////////////////////////////////
+// GVA HISTOGRAM
+////////////////////////////////////////////////////////////////
+
+
+var createNewGVASVG = function() {
+
+    pZoo.gvaObj.margin = {top: 10, right: 30, bottom: 30, left: 30};
+    pZoo.gvaObj.width = 600 - pZoo.gvaObj.margin.left - pZoo.gvaObj.margin.right;
+    pZoo.gvaObj.height = 200 - pZoo.gvaObj.margin.top - pZoo.gvaObj.margin.bottom;
+
+    var svg = d3.select(".gva-content").append("svg")
+        .attr("width", pZoo.gvaObj.width + pZoo.gvaObj.margin.left + pZoo.gvaObj.margin.right)
+        .attr("height", pZoo.gvaObj.height + pZoo.gvaObj.margin.top + pZoo.gvaObj.margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + pZoo.gvaObj.margin.left + "," + pZoo.gvaObj.margin.top + ")");
+};
+
+
+var drawGVAHisto = function() {
+
+    // remove old display contents
+    d3.select('.gva-content').selectAll('.bar').remove();
+    d3.select('.gva-content').selectAll('text').remove();
+
+    // if our response contains no data (= is an error), we don't want to draw anything
+    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+
+        // configure data
+        dat = pZoo.popObj.response.fam_df;
+        var origVals = [];
+        for (i = 0; i < dat.length; i++) { origVals.push(dat[i].gva2013); }
+        var thresholds = [-9999];
+        for (i = 10000; i < 40001; i = i + 5000) { thresholds.push(i); }
+        var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
+
+        // this is a hack to not display the 0-bin
+        thresholds = thresholds.slice(1);
+        binnedVals = binnedVals.slice(1);
+
+        // configure scales
+        var xScale = d3.scale.ordinal()
+            .domain(thresholds)
+            .rangeRoundBands([0, pZoo.gvaObj.width], 0.2, 0.6);
+        var yScale = d3.scale.linear()
+            .domain([d3.max(binnedVals, function(d) { return d.y; }), 0])
+            .range([pZoo.gvaObj.height - (2 * pZoo.gvaObj.margin.top), 0]);
+
+        // configure axes (just x-axis, no y-axis)
+        var xAxis = d3.svg.axis()
+            .scale(xScale)
+            .orient('bottom')
+            .tickValues(thresholds);
+
+        // DRAW, PILGRIM!
+        // draw the 'bar' elements
+        var bar = d3.select('.gva-content').select('svg').selectAll('.bar')
+            .data(binnedVals)
+            .enter()
+            .append('g')
+            .attr('class', 'bar')
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+
+        // draw the rectangles - these are the actual visualization bits
+        bar.append('rect')
+            .attr('y', pZoo.gvaObj.height)
+            .attr('height', 0)
+            .attr('width', xScale.rangeBand())
+            .transition()
+            .attr('y', function(d) { return pZoo.gvaObj.height - yScale(d.y); })
+            .attr('height', function(d) { return yScale(d.y); });
+
+        // draw the axes
+        d3.select('.gva-content').select('svg')
+            .append('g')
+            .attr('class', 'x axis')
+            .attr('transform', 'translate(' + xScale.rangeBand() / 1.6 + ', ' + pZoo.gvaObj.height + ')')
+            .call(xAxis);
+
+        // configure and draw text labels
+        var formatCount = d3.format(",.0f");
+        bar.append("text")
+            .attr("dy", ".75em")
+            .attr('y', function(d) { return pZoo.gvaObj.height - yScale(d.y) - 10; })
+            .attr('transform', function(d) { return 'translate(' + xScale.rangeBand() / 2 + ', 0)'; })
+            .attr("text-anchor", "middle")
+            .text(function(d) { return formatCount(d.y); });
+    }
+};
+
+
+////////////////////////////////////////////////////////////////
 // SEARCH FUNCTION
 ////////////////////////////////////////////////////////////////
 
@@ -354,6 +446,7 @@ var doSearch = function(url, query) {
         plotFamily();
         drawPopHisto();
         drawElevHisto();
+        drawGVAHisto();
     }).fail(function(a,b,c) {
         alert('foo');
     });
@@ -413,6 +506,7 @@ $( document ).ready( function() {
     loadMapData();
     createNewPopSVG();
     createNewElevSVG();
+    createNewGVASVG();
     doSearch('/search/', 'ashley');
 
     $('#search').submit(function(e) {
