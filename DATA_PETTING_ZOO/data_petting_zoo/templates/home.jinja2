@@ -1,0 +1,117 @@
+{% extends 'base.jinja2' %}
+
+
+{% block head_scripts %}
+
+    <link href='/static/css/d3.css' type='text/css' rel='stylesheet'>
+    <link href="/static/css/d3.slider.css" type="text/css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src='/static/js/d3.min.js'></script>
+    <script src='/static/js/topojson.js'></script>
+    <script src='/static/js/style.js' type="text/javascript"></script>
+    <script src="/static/js/d3.slider.js" type="text/javascript"></script>
+
+
+{% endblock %}
+
+
+{% block main_content %}
+
+    <div class='querybar-container'>
+        <div class='querybar-content'>
+
+            <div class='search-container'>
+                <h3>Search</h3>
+                <form action="request.route_url('search', n" method="GET" id="search">
+                    <input type="text" id="query" value="Ashley"></input>
+                    <input type="submit" value="Search"></input>
+                </form>
+            </div>
+
+            <div class='dropdown-container'>
+                <h3>Name Families</h3>
+                <select id='dropdown'>
+                    <option>Select Pattern</option>
+                {% for i in menu_items %}
+                    <option value="{{ i[0] }}">{{ i[1] }}</option>
+                {% endfor %}
+                </select>
+            </div>
+
+        </div>
+    </div>
+
+    <div class='clearfix'></div>
+
+    <div class='body-container'>
+
+
+        <div id="namefam-info-container">
+            <h1 id='placename'></h1>
+            <h2 id='namefam-info'></h2>
+        </div>
+
+
+        <div class='left-side-container'>
+
+            <div class='map-container'>
+
+                <div class='map-title'>
+                </div>
+
+                <div class='map-content'>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class='right-side-container'>
+
+            <div class='pop-container'>
+
+                <div class='pop-content'>
+                </div>
+
+                <div class='pop-title'>
+                    <h1>Population</h1>
+                </div>
+
+            </div>
+
+            <div class='elev-container'>
+
+                <div class='elev-content'>
+                </div>
+
+                <div class='elev-title'>
+                    <h1>Elevation</h1>
+                </div>
+
+            </div>
+
+            <div class='gva-container'>
+
+                <div class='gva-content'>
+                </div>
+
+                <div class='gva-title'>
+                    <h1>Gross Value Added</h1>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+{% block body_scripts %}
+
+    <script src='/static/js/vis.js'></script>
+
+{% endblock %}

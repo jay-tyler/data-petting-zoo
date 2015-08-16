@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<head>
+    <meta charset='utf-8'>
+
+    {% block head_scripts %}
+    {% endblock %}
+
+    <link rel='shortcut icon' type='image/x-icon' href='/static/img/favicon.ico' />
+    <link href='http://fonts.googleapis.com/css?family=Chango' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Libre+Baskerville:400,700' rel='stylesheet' type='text/css'>
+    <link href='/static/css/style.css' type='text/css' rel='stylesheet'>
+
+    {% block title %}
+    <title>GeoNames: A Data Petting Zoo</title>
+    {% endblock %}
+
+</head>
+
+<body>
+
+    <div class='header'>
+        <header>
+            <h1>What's In A Name?</h1>
+            <h2>A Petting Zoo For Data</h2>
+        </header>
+    </div>
+
+    <div class='nav'>
+            <h2 id='home_link'><a href="{{ request.route_url('home') }}">The Zoo</a></h2>
+            <h2 id='about_link'><a href="{{ request.route_url('about') }}">The Animals</a></h2>
+    </div>
+
+    <div class='clearfix'></div>
+
+    {% block main_content %}
+    {% endblock %}
+
+    <footer>
+        <p>&copy; 2015 Jason Tyler, Saki Fu, Grace Hatamyar, Tanner Lake</p>
+    </footer>
+
+    {% block body_scripts %}
+    {% endblock %}
+
+</body>
+
+</html>

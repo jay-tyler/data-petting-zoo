@@ -1,0 +1,59 @@
+/********************************
+Map Styles
+********************************/
+
+.subunit.SCT { fill: #ddc; }
+.subunit.WLS { fill: #cdd; }
+.subunit.ENG { fill: #dcd; }
+
+.country-label {
+  fill: #777;
+  fill-opacity: .5;
+  font-size: 20px;
+  font-weight: 300;
+  text-anchor: middle;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 60px;
+    height: 28px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+/********************************
+Histogram Styles
+********************************/
+
+.bar rect {
+  shape-rendering: crispEdges;
+}
+
+.bar text {
+  fill: #000;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.pop-content .bar rect {
+  fill: lightsteelblue;
+}
+
+.elev-content .bar rect {
+  fill: #daa5a5;
+}
+
+.gva-content .bar rect {
+  fill: #b8d8b8;
+}
