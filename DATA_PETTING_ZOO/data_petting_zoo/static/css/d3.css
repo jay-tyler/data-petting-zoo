@@ -21,7 +21,7 @@ div.tooltip {
     height: 28px;
     padding: 2px;
     font: 12px sans-serif;
-    background: lightsteelblue;
+    background: #B0C4DE;
     border: 0px;
     border-radius: 8px;
     pointer-events: none;
@@ -47,13 +47,25 @@ Histogram Styles
 }
 
 .pop-content .bar rect {
-  fill: lightsteelblue;
+  fill: #B0C4DE;
+}
+
+.pop-content .bar rect:hover {
+  fill: #cfdbeb;
 }
 
 .elev-content .bar rect {
   fill: #daa5a5;
 }
 
+.elev-content .bar rect:hover {
+  fill: #e8c9c9;
+}
+
 .gva-content .bar rect {
   fill: #b8d8b8;
+}
+
+.gva-content .bar rect:hover {
+  fill: #d4e7d4;
 }
