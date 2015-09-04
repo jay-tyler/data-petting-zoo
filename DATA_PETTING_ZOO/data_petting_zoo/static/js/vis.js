@@ -107,21 +107,21 @@ var plotFamily = function() {
             .data(pZoo.popObj.response.fam_df)
             .enter()
             .append("circle")
+            .attr("class", "city-location")
             .attr("cx", function(d) {
                 return pZoo.mapObj.projection([d.long, d.lat])[0];
             })
             .attr("cy", function(d) {
                 return pZoo.mapObj.projection([d.long, d.lat])[1];
             })
-            .attr("r", 4)
-            .style("fill", "grey")
+            // .attr("r", 4)
             .on("mouseover", function(d) {
                 div.transition()
                     .duration(100)
                     .style("opacity", 0.9);
                 div.html(d.name)
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px");
+                    .style("left", (d3.event.pageX + 20) + "px")
+                    .style("top", (d3.event.pageY - 15) + "px");
                 })
             .on("mouseout", function(d) {
                 div.transition()
@@ -204,7 +204,7 @@ var drawPopHisto = function() {
             .data(binnedVals)
             .enter()
             .append('g')
-            .attr('class', 'bar')
+            .attr('class', 'bar pop-bar')
             .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
 
         // draw the rectangles - these are the actual visualization bits
@@ -497,6 +497,11 @@ var showRowInfo = function(response) {
 
 
 ////////////////////////////////////////////////////////////////
+// HISTOGRAM INTERACTIVITY
+////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////
 // ON PAGE LOAD
 ////////////////////////////////////////////////////////////////
 
@@ -523,3 +528,33 @@ $( document ).ready( function() {
     });
 
 });
+
+
+////////////////////////////////////////////////////////////////
+// CLICK HANDLER
+////////////////////////////////////////////////////////////////
+
+
+var clickHandler = function(event) {
+    var target = event.target;
+
+    switch(target.class) {
+        case 'pop-bar':
+            alert('population histogram bar');
+            break;
+        case 'edit-btn':
+            editEntry(event);
+            break;
+        case 'post-entry-btn':
+            if ( $('#toc').length ) {
+                ajaxSaveNewEntry(event);
+            } else {
+                ajaxSaveEditEntry(event);
+            }
+            break;
+
+    }
+};
+
+
+$('body').on("click", clickHandler);

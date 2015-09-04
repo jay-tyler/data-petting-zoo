@@ -15,17 +15,35 @@ Map Styles
 }
 
 div.tooltip {
-    position: absolute;
-    text-align: center;
-    width: 60px;
-    height: 28px;
-    padding: 2px;
-    font: 12px sans-serif;
-    background: #B0C4DE;
-    border: 0px;
-    border-radius: 8px;
-    pointer-events: none;
+  display: inline-block;
+  position: absolute;
+  text-align: center;
+  width: auto;
+  height: auto;
+  padding: 10px;
+  font: 12px sans-serif;
+  background: #B0C4DE;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
 }
+
+.city-location {
+  fill: #777;
+  position: relative;
+  z-index: 2;
+  r: 4;
+}
+
+.city-location:hover {
+  fill: #eee;
+  stroke: #000;
+  stroke-width: 1;
+  position: relative;
+  z-index: 9999;
+  r: 10;
+}
+
 
 /********************************
 Histogram Styles
