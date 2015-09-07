@@ -1,5 +1,6 @@
 var pZoo = {
     'mapObj': {},
+    'dataObj': {},
     'popObj': {},
     'elevObj': {},
     'gvaObj': {},
@@ -181,7 +182,7 @@ var drawPopHisto = function() {
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
-        thresholds = thresholds.slice(1);
+        thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
 
         // configure scales
@@ -204,11 +205,13 @@ var drawPopHisto = function() {
             .data(binnedVals)
             .enter()
             .append('g')
-            .attr('class', 'bar pop-bar')
-            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+            .attr('class', 'bar')
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
+            .on("click", function(d) { alert(d.x); });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
+            .attr('class', 'pop-bar')
             .attr('y', pZoo.popObj.height)
             .attr('height', 0)
             .attr('width', xScale.rangeBand())
@@ -271,7 +274,7 @@ var drawElevHisto = function() {
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
-        thresholds = thresholds.slice(1);
+        thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
 
         // configure scales
@@ -295,10 +298,12 @@ var drawElevHisto = function() {
             .enter()
             .append('g')
             .attr('class', 'bar')
-            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
+            .on("click", function(d) { alert(d.x); });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
+            .attr('class', 'elev-bar')
             .attr('y', pZoo.elevObj.height)
             .attr('height', 0)
             .attr('width', xScale.rangeBand())
@@ -362,7 +367,7 @@ var drawGVAHisto = function() {
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
-        thresholds = thresholds.slice(1);
+        thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
 
         // configure scales
@@ -386,10 +391,12 @@ var drawGVAHisto = function() {
             .enter()
             .append('g')
             .attr('class', 'bar')
-            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
+            .on("click", function(d) { alert(d.x); });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
+            .attr('class', 'gva-bar')
             .attr('y', pZoo.gvaObj.height)
             .attr('height', 0)
             .attr('width', xScale.rangeBand())
@@ -500,6 +507,10 @@ var showRowInfo = function(response) {
 // HISTOGRAM INTERACTIVITY
 ////////////////////////////////////////////////////////////////
 
+var clickTest = (function(event) {
+    alert('testing');
+});
+
 
 ////////////////////////////////////////////////////////////////
 // ON PAGE LOAD
@@ -538,23 +549,18 @@ $( document ).ready( function() {
 var clickHandler = function(event) {
     var target = event.target;
 
+    alert('target: ' + target + ', class: ' + target.class);
+
     switch(target.class) {
         case 'pop-bar':
             alert('population histogram bar');
             break;
-        case 'edit-btn':
-            editEntry(event);
-            break;
-        case 'post-entry-btn':
-            if ( $('#toc').length ) {
-                ajaxSaveNewEntry(event);
-            } else {
-                ajaxSaveEditEntry(event);
-            }
+        case 'clear-highlights-btn':
+            clearHighlights(event);
             break;
 
     }
 };
 
 
-$('body').on("click", clickHandler);
+// $('body').on("click", clickHandler);
