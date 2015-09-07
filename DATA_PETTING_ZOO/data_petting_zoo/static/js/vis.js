@@ -189,9 +189,10 @@ var drawPopHisto = function() {
 
         // Label associated map points with class corresponding to bin x
         for ( var i = 0 ; i < dat.length ; i ++) {
+            // debugger;
             for ( var j = thresholds.length - 1 ; j >= 0 ; j --) {
                 if ( dat[i].pop > thresholds[j] ) {
-                    $('#row' + i).attr('class', 'pop' + thresholds[j])
+                    $('#row' + i).attr('class', 'pop' + thresholds[j]);
                     break;
                 }
             }
@@ -287,15 +288,7 @@ var drawElevHisto = function() {
         thresholds = thresholds.slice(1);
         binnedVals = binnedVals.slice(1);
 
-        // add class for 
-        for ( i = 0 ; i < dat.length ; i ++) {
-            for ( j = 0 ; j < thresholds.length ; j ++) {
-                if ( dat[i].pop > thresholds[j] ) {
-                    $('#row' + i).attr('class', 'elev' + thresholds[j])
-                    break;
-                }
-            }
-        }
+        // TODO: add class for elev
 
         // configure scales
         var xScale = d3.scale.ordinal()
