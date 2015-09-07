@@ -187,6 +187,16 @@ var drawPopHisto = function() {
         thresholds = thresholds.slice(1);
         binnedVals = binnedVals.slice(1);
 
+        //TODO: Label associated map points with class corresponding to bin x
+        for ( i = 0 ; i < dat.length ; i ++) {
+            for ( j = 0 ; j < thresholds.length ; j ++) {
+                if ( dat[i].pop > thresholds[j] ) {
+                    $('#row' + i).attr('class', 'pop' + thresholds[j])
+                    break;
+                }
+            }
+        }
+
         // configure scales
         var xScale = d3.scale.ordinal()
             .domain(thresholds)
