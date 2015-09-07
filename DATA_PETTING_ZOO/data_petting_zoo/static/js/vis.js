@@ -114,6 +114,9 @@ var plotFamily = function() {
             .attr("cy", function(d) {
                 return pZoo.mapObj.projection([d.long, d.lat])[1];
             })
+            .attr("id", function(d, i) {
+                return "row" + i;
+            })
             // .attr("r", 4)
             .on("mouseover", function(d) {
                 div.transition()
