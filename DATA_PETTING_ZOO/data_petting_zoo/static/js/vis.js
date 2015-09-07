@@ -179,7 +179,7 @@ var drawPopHisto = function() {
         // configure data
         dat = pZoo.popObj.response.fam_df;
         var origVals = [];
-        for (i = 0; i < dat.length; i++) { origVals.push(dat[i].pop); }
+        for ( var i = 0; i < dat.length; i++) { origVals.push(dat[i].pop); }
         var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
@@ -187,9 +187,9 @@ var drawPopHisto = function() {
         thresholds = thresholds.slice(1);
         binnedVals = binnedVals.slice(1);
 
-        //TODO: Label associated map points with class corresponding to bin x
-        for ( i = 0 ; i < dat.length ; i ++) {
-            for ( j = 0 ; j < thresholds.length ; j ++) {
+        // Label associated map points with class corresponding to bin x
+        for ( var i = 0 ; i < dat.length ; i ++) {
+            for ( var j = thresholds.length - 1 ; j >= 0 ; j --) {
                 if ( dat[i].pop > thresholds[j] ) {
                     $('#row' + i).attr('class', 'pop' + thresholds[j])
                     break;
@@ -286,6 +286,16 @@ var drawElevHisto = function() {
         // this is a hack to not display the 0-bin
         thresholds = thresholds.slice(1);
         binnedVals = binnedVals.slice(1);
+
+        // add class for 
+        for ( i = 0 ; i < dat.length ; i ++) {
+            for ( j = 0 ; j < thresholds.length ; j ++) {
+                if ( dat[i].pop > thresholds[j] ) {
+                    $('#row' + i).attr('class', 'elev' + thresholds[j])
+                    break;
+                }
+            }
+        }
 
         // configure scales
         var xScale = d3.scale.ordinal()
