@@ -188,11 +188,14 @@ var drawPopHisto = function() {
         binnedVals = binnedVals.slice(1);
 
         // Label associated map points with class corresponding to bin x
-        loop1: for ( i = 0 ; i < dat.length ; i += 1 ) {
+        loop1:
+        for ( i = 0 ; i < dat.length ; i += 1 ) {
             // debugger;
-            loop2: for ( j = thresholds.length - 1 ; j >= 0 ; j --) {
+            loop2:
+            for ( j = thresholds.length - 1 ; j >= 0 ; j --) {
                 if ( dat[i].pop > thresholds[j] ) {
-                    $('#row' + i).addClass('class', 'pop' + thresholds[j]);
+                    var attrCache = $('#row' + i).attr('class')
+                    $('#row' + i).attr('class', attrCache + ' pop' + thresholds[j]);
                     break loop2;
                 }
             }
