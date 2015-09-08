@@ -1,10 +1,16 @@
+/*jslint white:true, for:true */
+// "use strict";
+
 var pZoo = {
-    'mapObj': {},
-    'popObj': {},
-    'elevObj': {},
-    'gvaObj': {},
+    mapObj: {},
+    popObj: {},
+    elevObj: {},
+    gvaObj: {}
 };
 
+var dat;
+var i;
+var j;
 
 ////////////////////////////////////////////////////////////////
 // MAP
@@ -12,20 +18,19 @@ var pZoo = {
 
 
 var loadMapData = function() {
-
     d3.json("/static/js/project_shapefiles/uk.json", function(error, uk) {
         if (error) {
             return console.error(error);
         } else {
             pZoo.mapObj.dat = uk;
             makeDefs();
+            return;
         }
     });
 };
 
 
 var makeDefs = function() {
-
     pZoo.mapObj.width = 600;
     pZoo.mapObj.height = 800;
 
@@ -52,7 +57,6 @@ var div = d3.select("body").append("div")
 
 
 var createNewMapSVG = function() {
-
     // create the SVG element that will hold the map
     var svg = d3.select(".map-content").append("svg")
         .attr("width", pZoo.mapObj.width)
@@ -63,7 +67,6 @@ var createNewMapSVG = function() {
 
 
 var drawMap = function() {
-
     d3.select("body").select('svg').selectAll('.subunit')
         .data(
             topojson
@@ -78,22 +81,21 @@ var drawMap = function() {
 
 
 var drawLabels = function() {
-
-        d3.select('.map-content').select('svg').selectAll(".subunit-label")
-            .data(
-                topojson
-                .feature(pZoo.mapObj.dat, pZoo.mapObj.dat.objects.subunits)
-                .features
-            )
-            .enter()
-            .append("text")
-            .attr("class", "country-label"
-            )
-            .attr("transform", function(d) {
-                return "translate(" + pZoo.mapObj.path.centroid(d) + ")";
-            })
-            .attr("dy", ".35em")
-            .text(function(d) { return d.properties.name; });
+    d3.select('.map-content').select('svg').selectAll(".subunit-label")
+        .data(
+            topojson
+            .feature(pZoo.mapObj.dat, pZoo.mapObj.dat.objects.subunits)
+            .features
+        )
+        .enter()
+        .append("text")
+        .attr("class", "country-label"
+        )
+        .attr("transform", function(d) {
+            return "translate(" + pZoo.mapObj.path.centroid(d) + ")";
+        })
+        .attr("dy", ".35em")
+        .text(function(d) { return d.properties.name; });
 };
 
 
@@ -141,20 +143,19 @@ var plotFamily = function() {
 
 
 var loadPopData = function() {
-
     d3.json("/static/js/histogram/acPaccPockS.json", function(error, aberP) {
         if (error) {
             return console.error(error);
         } else {
             pZoo.popObj.dat = aberP;
             createNewPopSVG();
+            return;
         }
     });
 };
 
 
 var createNewPopSVG = function() {
-
     pZoo.popObj.margin = {top: 10, right: 30, bottom: 30, left: 30};
     pZoo.popObj.width = 600 - pZoo.popObj.margin.left - pZoo.popObj.margin.right;
     pZoo.popObj.height = 200 - pZoo.popObj.margin.top - pZoo.popObj.margin.bottom;
@@ -168,7 +169,6 @@ var createNewPopSVG = function() {
 
 
 var drawPopHisto = function() {
-
     // remove old display contents
     d3.select('.pop-content').selectAll('.bar').remove();
     d3.select('.pop-content').selectAll('text').remove();
@@ -179,7 +179,7 @@ var drawPopHisto = function() {
         // configure data
         dat = pZoo.popObj.response.fam_df;
         var origVals = [];
-        for ( var i = 0; i < dat.length; i++) { origVals.push(dat[i].pop); }
+        for ( i = 0; i < dat.length; i += 1 ) { origVals.push(dat[i].pop); }
         var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
@@ -188,11 +188,11 @@ var drawPopHisto = function() {
         binnedVals = binnedVals.slice(1);
 
         // Label associated map points with class corresponding to bin x
-        loop1: for ( var i = 0 ; i < dat.length ; i ++) {
+        loop1: for ( i = 0 ; i < dat.length ; i += 1 ) {
             // debugger;
-            loop2: for ( var j = thresholds.length - 1 ; j >= 0 ; j --) {
+            loop2: for ( j = thresholds.length - 1 ; j >= 0 ; j --) {
                 if ( dat[i].pop > thresholds[j] ) {
-                    $('#row' + i).attr('class', 'pop' + thresholds[j]);
+                    $('#row' + i).addClass('class', 'pop' + thresholds[j]);
                     break loop2;
                 }
             }
@@ -280,7 +280,7 @@ var drawElevHisto = function() {
         // configure data
         dat = pZoo.popObj.response.fam_df;
         var origVals = [];
-        for (i = 0; i < dat.length; i++) { origVals.push(dat[i].delev); }
+        for ( i = 0; i < dat.length; i += 1 ) { origVals.push(dat[i].delev); }
         var thresholds = [-9999, 0, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 750];
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
@@ -372,9 +372,9 @@ var drawGVAHisto = function() {
         // configure data
         dat = pZoo.popObj.response.fam_df;
         var origVals = [];
-        for (i = 0; i < dat.length; i++) { origVals.push(dat[i].gva2013); }
+        for ( i = 0; i < dat.length; i += 1 ) { origVals.push(dat[i].gva2013); }
         var thresholds = [-9999];
-        for (i = 10000; i < 40001; i = i + 5000) { thresholds.push(i); }
+        for ( i = 10000; i < 40001; i = i + 5000) { thresholds.push(i); }
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
@@ -439,10 +439,11 @@ var drawGVAHisto = function() {
 
 var doSearch = function(url, query) {
 
+
     $.ajax({
         type: "GET",
         dataType: 'json',
-        url: url + query,
+        url: url + query
     }).done(function(response) {
         $("#query").val('');
         if (response.error) {
@@ -552,6 +553,7 @@ $( document ).ready( function() {
 
 
 var clickHandler = function(event) {
+    if (!event) var event = window.event;
     var target = event.target;
 
     switch(target.class) {
