@@ -1,9 +1,15 @@
 var pZoo = {
     'mapObj': {},
     'dataObj': {},
-    'popObj': {},
-    'elevObj': {},
-    'gvaObj': {},
+    'popObj': {
+        thresholds: [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000]
+    },
+    'elevObj': {
+        thresholds: [-9999, 0, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 750]
+    },
+    'gvaObj': {
+        thresholds: [-9999, 10000, 15000, 20000, 25000, 30000, 35000, 40000]
+    },
 };
 
 
@@ -118,7 +124,6 @@ var plotFamily = function() {
             .attr("id", function(d, i) {
                 return "row" + i;
             })
-            // .attr("r", 4)
             .on("mouseover", function(d) {
                 div.transition()
                     .duration(100)
@@ -181,7 +186,7 @@ var drawPopHisto = function() {
         dat = pZoo.dataObj.fam_df;
         var origVals = [];
         for (var n = 0; n < dat.length; n++) { origVals.push(dat[n].pop); }
-        var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
+        var thresholds = pZoo.popObj.thresholds;
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
@@ -194,12 +199,12 @@ var drawPopHisto = function() {
                 // console.log('dat[i].pop: ' + dat[i].pop + ', thresholds[j]: ' + thresholds[j]);
                 if ( dat[i].pop > thresholds[j] ) {
                     $('#row' + i).addClass('pop' + thresholds[j]);
-                    console.log(
-                        'row: ' + i + ', element: ' + $('#row' + i)
-                    );
-                    console.log(
-                        'class: ' + $('#row' + i).class
-                    );
+                    // console.log(
+                    //     'row: ' + i + ', element: ' + $('#row' + i)
+                    // );
+                    // console.log(
+                    //     'class: ' + $('#row' + i).class
+                    // );
                     break;
                 }
             }
@@ -290,7 +295,7 @@ var drawElevHisto = function() {
         dat = pZoo.dataObj.fam_df;
         var origVals = [];
         for (i = 0; i < dat.length; i++) { origVals.push(dat[i].delev); }
-        var thresholds = [-9999, 0, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 750];
+        var thresholds = pZoo.elevObj.thresholds;
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
@@ -392,8 +397,7 @@ var drawGVAHisto = function() {
         dat = pZoo.dataObj.fam_df;
         var origVals = [];
         for (i = 0; i < dat.length; i++) { origVals.push(dat[i].gva2013); }
-        var thresholds = [-9999];
-        for (i = 10000; i < 40001; i = i + 5000) { thresholds.push(i); }
+        var thresholds = pZoo.gvaObj.thresholds;
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
