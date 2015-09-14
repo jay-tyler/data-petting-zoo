@@ -12,6 +12,7 @@ var pZoo = {
 var dat;
 var i;
 var j;
+var highlightStyle = {};
 
 ////////////////////////////////////////////////////////////////
 // MAP
@@ -197,9 +198,6 @@ var drawPopHisto = function() {
             for ( j = thresholds.length - 1 ; j >= 0 ; j -- ) {
                 if ( dat[i].pop >= thresholds[j] ) {
                     d3.select('#row' + i).classed('pop' + thresholds[j], true);
-                    console.log(
-                        'class: ' + 'pop' + thresholds[j]
-                    )
                     continue outerLoop;
                 }
             }
@@ -228,7 +226,24 @@ var drawPopHisto = function() {
             .append('g')
             .attr('class', 'bar')
             .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
-            .on("click", function(d) { alert(d.x); });
+            .on("click", function(d) { alert(d.x); })
+            .on("mouseover", function(d) {
+                d3.selectAll('.pop' + d.x)
+                  .style({
+                    'opacity': 1,
+                    'fill': 'black',
+                    'r': 3
+                   });
+            })
+            .on('mouseout', function(d) {
+                d3.selectAll('.pop' + d.x)
+                  // TODO: Update this such that style is set to default css for .city-location
+                  .style({
+                    'opacity': 0.5,
+                    'fill': "#777",
+                    'r': 2.5
+                  });
+            });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
@@ -334,7 +349,24 @@ var drawElevHisto = function() {
             .append('g')
             .attr('class', 'bar')
             .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
-            .on("click", function(d) { alert(d.x); });
+            .on("click", function(d) { alert(d.x); })
+                        .on("mouseover", function(d) {
+                d3.selectAll('.elev' + d.x)
+                  .style({
+                    'opacity': 1,
+                    'fill': 'black',
+                    'r': 3
+                   });
+            })
+            .on('mouseout', function(d) {
+                d3.selectAll('.elev' + d.x)
+                  // TODO: Update this such that style is set to default css for .city-location
+                  .style({
+                    'opacity': 0.5,
+                    'fill': "#777",
+                    'r': 2.5
+                  });
+            });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
@@ -441,7 +473,24 @@ var drawGVAHisto = function() {
             .append('g')
             .attr('class', 'bar')
             .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
-            .on("click", function(d) { alert(d.x); });
+            .on("click", function(d) { alert(d.x); })
+            .on("mouseover", function(d) {
+                d3.selectAll('.gva' + d.x)
+                  .style({
+                    'opacity': 1,
+                    'fill': 'black',
+                    'r': 3
+                   });
+            })
+            .on('mouseout', function(d) {
+                d3.selectAll('.gva' + d.x)
+                  // TODO: Update this such that style is set to default css for .city-location
+                  .style({
+                    'opacity': 0.5,
+                    'fill': "#777",
+                    'r': 2.5
+                  });
+            });;
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
