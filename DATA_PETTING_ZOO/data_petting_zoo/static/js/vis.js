@@ -80,21 +80,21 @@ var drawMap = function() {
 
 var drawLabels = function() {
 
-        d3.select('.map-content').select('svg').selectAll(".subunit-label")
-            .data(
-                topojson
-                .feature(pZoo.mapObj.dat, pZoo.mapObj.dat.objects.subunits)
-                .features
-            )
-            .enter()
-            .append("text")
-            .attr("class", "country-label"
-            )
-            .attr("transform", function(d) {
-                return "translate(" + pZoo.mapObj.path.centroid(d) + ")";
-            })
-            .attr("dy", ".35em")
-            .text(function(d) { return d.properties.name; });
+    d3.select('.map-content').select('svg').selectAll(".subunit-label")
+        .data(
+            topojson
+            .feature(pZoo.mapObj.dat, pZoo.mapObj.dat.objects.subunits)
+            .features
+        )
+        .enter()
+        .append("text")
+        .attr("class", "country-label"
+        )
+        .attr("transform", function(d) {
+            return "translate(" + pZoo.mapObj.path.centroid(d) + ")";
+        })
+        .attr("dy", ".35em")
+        .text(function(d) { return d.properties.name; });
 };
 
 
@@ -102,13 +102,13 @@ var plotFamily = function() {
 
     d3.select('.map-content').select("svg").selectAll('circle').remove();
 
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         d3.select(".map-content").select("svg").selectAll("circle")
-            .data(pZoo.popObj.response.fam_df)
+            .data(pZoo.dataObj.fam_df)
             .enter()
             .append("circle")
-            .attr("class", "city-location")
+            .classed("city-location", true)
             .attr("cx", function(d) {
                 return pZoo.mapObj.projection([d.long, d.lat])[0];
             })
@@ -175,12 +175,12 @@ var drawPopHisto = function() {
     d3.select('.pop-content').selectAll('text').remove();
 
     // if our response contains no data (= is an error), we don't want to draw anything
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         // configure data
-        dat = pZoo.popObj.response.fam_df;
+        dat = pZoo.dataObj.fam_df;
         var origVals = [];
-        for ( var i = 0; i < dat.length; i++) { origVals.push(dat[i].pop); }
+        for (var n = 0; n < dat.length; n++) { origVals.push(dat[n].pop); }
         var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
@@ -191,8 +191,15 @@ var drawPopHisto = function() {
         // Label associated map points with class corresponding to bin x
         for ( var i = 0 ; i < dat.length ; i ++) {
             for ( var j = thresholds.length - 1 ; j >= 0 ; j --) {
+                // console.log('dat[i].pop: ' + dat[i].pop + ', thresholds[j]: ' + thresholds[j]);
                 if ( dat[i].pop > thresholds[j] ) {
-                    $('#row' + i).attr('class', 'pop' + thresholds[j])
+                    $('#row' + i).addClass('pop' + thresholds[j]);
+                    console.log(
+                        'row: ' + i + ', element: ' + $('#row' + i)
+                    );
+                    console.log(
+                        'class: ' + $('#row' + i).class
+                    );
                     break;
                 }
             }
@@ -277,10 +284,10 @@ var drawElevHisto = function() {
     d3.select('.elev-content').selectAll('text').remove();
 
     // if our response contains no data (= is an error), we don't want to draw anything
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         // configure data
-        dat = pZoo.popObj.response.fam_df;
+        dat = pZoo.dataObj.fam_df;
         var origVals = [];
         for (i = 0; i < dat.length; i++) { origVals.push(dat[i].delev); }
         var thresholds = [-9999, 0, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 750];
@@ -290,11 +297,11 @@ var drawElevHisto = function() {
         thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
 
-        // add class for 
+        // add class for
         for ( i = 0 ; i < dat.length ; i ++) {
             for ( j = 0 ; j < thresholds.length ; j ++) {
                 if ( dat[i].pop > thresholds[j] ) {
-                    $('#row' + i).attr('class', 'elev' + thresholds[j])
+                    $('#row' + i).addClass('elev' + thresholds[j]);
                     break;
                 }
             }
@@ -379,10 +386,10 @@ var drawGVAHisto = function() {
     d3.select('.gva-content').selectAll('text').remove();
 
     // if our response contains no data (= is an error), we don't want to draw anything
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         // configure data
-        dat = pZoo.popObj.response.fam_df;
+        dat = pZoo.dataObj.fam_df;
         var origVals = [];
         for (i = 0; i < dat.length; i++) { origVals.push(dat[i].gva2013); }
         var thresholds = [-9999];
@@ -461,7 +468,7 @@ var doSearch = function(url, query) {
         $("#query").val('');
         if (response.error) {
             showErrorSheep(response);
-            pZoo.popObj.response = {};
+            pZoo.dataObj = {};
         }
         else if (response.message) {
             showRowInfo(response);
@@ -472,7 +479,7 @@ var doSearch = function(url, query) {
         else {
             showNameFamInfo(response);
         }
-        pZoo.popObj.response = response;
+        pZoo.dataObj = response;
         plotFamily();
         drawPopHisto();
         drawElevHisto();
@@ -529,6 +536,7 @@ var showRowInfo = function(response) {
 ////////////////////////////////////////////////////////////////
 // HISTOGRAM INTERACTIVITY
 ////////////////////////////////////////////////////////////////
+
 
 var clickTest = (function(event) {
     alert('testing');
