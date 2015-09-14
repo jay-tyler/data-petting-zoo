@@ -194,12 +194,12 @@ var drawPopHisto = function() {
                 // console.log('dat[i].pop: ' + dat[i].pop + ', thresholds[j]: ' + thresholds[j]);
                 if ( dat[i].pop > thresholds[j] ) {
                     $('#row' + i).addClass('pop' + thresholds[j]);
-                    console.log(
-                        'row: ' + i + ', element: ' + $('#row' + i)
-                    );
-                    console.log(
-                        'class: ' + $('#row' + i).class
-                    );
+                    // console.log(
+                    //     'row: ' + i + ', element: ' + $('#row' + i) + 'bin xmin:' + 'thresholds[j]: ' + thresholds[j]
+                    // );
+                    // console.log(
+                    //     'class: ' + $('#row' + i).class
+                    // );
                     break;
                 }
             }
@@ -297,12 +297,22 @@ var drawElevHisto = function() {
         thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
 
-        // add class for
+        // add bin class to svg circles, vectorized formulation
+
+        // add bin class to svg circles, for loop formulation
+        outerLoop:
         for ( i = 0 ; i < dat.length ; i ++) {
-            for ( j = 0 ; j < thresholds.length ; j ++) {
-                if ( dat[i].pop > thresholds[j] ) {
-                    $('#row' + i).addClass('elev' + thresholds[j]);
-                    break;
+            innerLoop:
+            for ( j = thresholds.length - 1 ; j >= 0 ; j --) {
+                if ( dat[i].delev >= thresholds[j] ) {
+                    d3.select('#row' + i).classed('elev' + thresholds[j], true);
+                    console.log(
+                        'row: ' + i + ', element: ' + $('#row' + i) + 'bin xmin:' + 'thresholds[j]: ' + thresholds[j]
+                    );
+                    console.log(
+                        'class: ' + $('#row' + i).class
+                    );
+                    continue outerLoop;
                 }
             }
         }
