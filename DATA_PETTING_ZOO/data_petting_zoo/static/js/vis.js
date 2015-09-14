@@ -192,11 +192,14 @@ var drawPopHisto = function() {
 
         // add bin class to svg circles, for loop formulation
         outerLoop:
-        for ( i = 0 ; i < dat.length ; i ++) {
+        for ( i = 0 ; i < dat.length ; i ++ ) {
             innerLoop:
-            for ( j = thresholds.length - 1 ; j >= 0 ; j --) {
-                if ( dat[i].delev >= thresholds[j] ) {
+            for ( j = thresholds.length - 1 ; j >= 0 ; j -- ) {
+                if ( dat[i].pop >= thresholds[j] ) {
                     d3.select('#row' + i).classed('pop' + thresholds[j], true);
+                    console.log(
+                        'class: ' + 'pop' + thresholds[j]
+                    )
                     continue outerLoop;
                 }
             }
@@ -401,6 +404,20 @@ var drawGVAHisto = function() {
         // this is a hack to not display the 0-bin
         thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
+
+        // add bin class to svg circles, vectorized formulation
+
+        // add bin class to svg circles, for loop formulation
+        outerLoop:
+        for ( i = 0 ; i < dat.length ; i ++) {
+            innerLoop:
+            for ( j = thresholds.length - 1 ; j >= 0 ; j --) {
+                if ( dat[i].gva2013 >= thresholds[j] ) {
+                    d3.select('#row' + i).classed('gva' + thresholds[j], true);
+                    continue outerLoop;
+                }
+            }
+        }
 
         // configure scales
         var xScale = d3.scale.ordinal()
