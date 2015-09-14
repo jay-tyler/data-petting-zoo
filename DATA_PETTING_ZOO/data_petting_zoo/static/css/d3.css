@@ -41,7 +41,7 @@ div.tooltip {
   stroke-width: 1;
   position: relative;
   z-index: 9999;
-  r: 10;
+  r: 5;
 }
 
 
@@ -64,26 +64,26 @@ Histogram Styles
   shape-rendering: crispEdges;
 }
 
-.pop-content .bar rect {
+.pop-bar {
   fill: #B0C4DE;
 }
 
-.pop-content .bar rect:hover {
+.pop-bar:hover {
   fill: #cfdbeb;
 }
 
-.elev-content .bar rect {
+.elev-bar {
   fill: #daa5a5;
 }
 
-.elev-content .bar rect:hover {
+.elev-bar:hover {
   fill: #e8c9c9;
 }
 
-.gva-content .bar rect {
+.gva-bar {
   fill: #b8d8b8;
 }
 
-.gva-content .bar rect:hover {
+.gva-bar:hover {
   fill: #d4e7d4;
 }

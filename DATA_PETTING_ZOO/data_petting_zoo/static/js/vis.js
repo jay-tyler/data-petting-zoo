@@ -2,10 +2,11 @@
 // "use strict";
 
 var pZoo = {
-    mapObj: {},
-    popObj: {},
-    elevObj: {},
-    gvaObj: {}
+    'mapObj': {},
+    'dataObj': {},
+    'popObj': {},
+    'elevObj': {},
+    'gvaObj': {},
 };
 
 var dat;
@@ -103,13 +104,13 @@ var plotFamily = function() {
 
     d3.select('.map-content').select("svg").selectAll('circle').remove();
 
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         d3.select(".map-content").select("svg").selectAll("circle")
-            .data(pZoo.popObj.response.fam_df)
+            .data(pZoo.dataObj.fam_df)
             .enter()
             .append("circle")
-            .attr("class", "city-location")
+            .classed("city-location", true)
             .attr("cx", function(d) {
                 return pZoo.mapObj.projection([d.long, d.lat])[0];
             })
@@ -174,35 +175,35 @@ var drawPopHisto = function() {
     d3.select('.pop-content').selectAll('text').remove();
 
     // if our response contains no data (= is an error), we don't want to draw anything
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         // configure data
-        dat = pZoo.popObj.response.fam_df;
+        dat = pZoo.dataObj.fam_df;
         var origVals = [];
-        for ( i = 0; i < dat.length; i += 1 ) { origVals.push(dat[i].pop); }
+        for (var n = 0; n < dat.length; n++) { origVals.push(dat[n].pop); }
         var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
-        thresholds = thresholds.slice(1);
+        thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
 
         // Label associated map points with class corresponding to bin x
-        // var j;
-        // var i;
-
-        // loop1:
-        // for ( i = 0 ; i < dat.length ; i += 1 ) {
-        //     // debugger;
-        //     loop2:
-        //     for ( j = thresholds.length - 1 ; j >= 0 ; j --) {
-        //         if ( dat[i].pop > thresholds[j] ) {
-        //             var attrCache = $('#row' + i).attr('class')
-        //             $('#row' + i).attr('class', attrCache + ' pop' + thresholds[j]);
-        //             break loop2;
-        //         }
-        //     }
-        // }
+        for ( var i = 0 ; i < dat.length ; i ++) {
+            for ( var j = thresholds.length - 1 ; j >= 0 ; j --) {
+                // console.log('dat[i].pop: ' + dat[i].pop + ', thresholds[j]: ' + thresholds[j]);
+                if ( dat[i].pop > thresholds[j] ) {
+                    $('#row' + i).addClass('pop' + thresholds[j]);
+                    console.log(
+                        'row: ' + i + ', element: ' + $('#row' + i)
+                    );
+                    console.log(
+                        'class: ' + $('#row' + i).class
+                    );
+                    break;
+                }
+            }
+        }
 
         // configure scales
         var xScale = d3.scale.ordinal()
@@ -224,11 +225,13 @@ var drawPopHisto = function() {
             .data(binnedVals)
             .enter()
             .append('g')
-            .attr('class', 'bar pop-bar')
-            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+            .attr('class', 'bar')
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
+            .on("click", function(d) { alert(d.x); });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
+            .attr('class', 'pop-bar')
             .attr('y', pZoo.popObj.height)
             .attr('height', 0)
             .attr('width', xScale.rangeBand())
@@ -281,20 +284,28 @@ var drawElevHisto = function() {
     d3.select('.elev-content').selectAll('text').remove();
 
     // if our response contains no data (= is an error), we don't want to draw anything
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         // configure data
-        dat = pZoo.popObj.response.fam_df;
+        dat = pZoo.dataObj.fam_df;
         var origVals = [];
         for ( i = 0; i < dat.length; i += 1 ) { origVals.push(dat[i].delev); }
         var thresholds = [-9999, 0, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 750];
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
-        thresholds = thresholds.slice(1);
+        thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
 
-        // TODO: add class for elev
+        // add class for
+        for ( i = 0 ; i < dat.length ; i ++) {
+            for ( j = 0 ; j < thresholds.length ; j ++) {
+                if ( dat[i].pop > thresholds[j] ) {
+                    $('#row' + i).addClass('elev' + thresholds[j]);
+                    break;
+                }
+            }
+        }
 
         // configure scales
         var xScale = d3.scale.ordinal()
@@ -317,10 +328,12 @@ var drawElevHisto = function() {
             .enter()
             .append('g')
             .attr('class', 'bar')
-            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
+            .on("click", function(d) { alert(d.x); });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
+            .attr('class', 'elev-bar')
             .attr('y', pZoo.elevObj.height)
             .attr('height', 0)
             .attr('width', xScale.rangeBand())
@@ -373,10 +386,10 @@ var drawGVAHisto = function() {
     d3.select('.gva-content').selectAll('text').remove();
 
     // if our response contains no data (= is an error), we don't want to draw anything
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         // configure data
-        dat = pZoo.popObj.response.fam_df;
+        dat = pZoo.dataObj.fam_df;
         var origVals = [];
         for ( i = 0; i < dat.length; i += 1 ) { origVals.push(dat[i].gva2013); }
         var thresholds = [-9999];
@@ -384,7 +397,7 @@ var drawGVAHisto = function() {
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
-        thresholds = thresholds.slice(1);
+        thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
 
         // configure scales
@@ -408,10 +421,12 @@ var drawGVAHisto = function() {
             .enter()
             .append('g')
             .attr('class', 'bar')
-            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
+            .on("click", function(d) { alert(d.x); });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
+            .attr('class', 'gva-bar')
             .attr('y', pZoo.gvaObj.height)
             .attr('height', 0)
             .attr('width', xScale.rangeBand())
@@ -454,7 +469,7 @@ var doSearch = function(url, query) {
         $("#query").val('');
         if (response.error) {
             showErrorSheep(response);
-            pZoo.popObj.response = {};
+            pZoo.dataObj = {};
         }
         else if (response.message) {
             showRowInfo(response);
@@ -465,7 +480,7 @@ var doSearch = function(url, query) {
         else {
             showNameFamInfo(response);
         }
-        pZoo.popObj.response = response;
+        pZoo.dataObj = response;
         plotFamily();
         drawPopHisto();
         drawElevHisto();
@@ -524,6 +539,11 @@ var showRowInfo = function(response) {
 ////////////////////////////////////////////////////////////////
 
 
+var clickTest = (function(event) {
+    alert('testing');
+});
+
+
 ////////////////////////////////////////////////////////////////
 // ON PAGE LOAD
 ////////////////////////////////////////////////////////////////
@@ -562,23 +582,18 @@ var clickHandler = function(event) {
     if (!event) var event = window.event;
     var target = event.target;
 
+    alert('target: ' + target + ', class: ' + target.class);
+
     switch(target.class) {
         case 'pop-bar':
             alert('population histogram bar');
             break;
-        case 'edit-btn':
-            editEntry(event);
-            break;
-        case 'post-entry-btn':
-            if ( $('#toc').length ) {
-                ajaxSaveNewEntry(event);
-            } else {
-                ajaxSaveEditEntry(event);
-            }
+        case 'clear-highlights-btn':
+            clearHighlights(event);
             break;
 
     }
 };
 
 
-$('body').on("click", clickHandler);
+// $('body').on("click", clickHandler);
