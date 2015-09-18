@@ -114,7 +114,24 @@ var plotFamily = function() {
             .data(pZoo.dataObj.fam_df)
             .enter()
             .append("circle")
-            .classed("city-location", true)
+            .attr('class', function(d) {
+                var classList = 'city-location';
+                var thresholdArrays = [
+                    pZoo.popObj.thresholds,
+                    pZoo.elevObj.thresholds,
+                    pZoo.gvaObj.thresholds
+                ];
+                var relevantVarNames = ['pop', 'delev', 'gva2013'];
+                for (var threshCount = 0; threshCount < thresholdArrays.length; threshCount ++) {
+                    for (var threshIndex = 0; threshIndex < thresholdArrays[threshCount].length; threshIndex ++) {
+                        if (d[relevantVarNames[threshCount]] <= thresholdArrays[threshCount][threshIndex]) {
+                            classList += ' ' + relevantVarNames[threshCount] + '-bin-' + thresholdArrays[threshCount][threshIndex - 1];
+                            break;
+                        }
+                    }
+                }
+                return classList;
+            })
             .attr("cx", function(d) {
                 return pZoo.mapObj.projection([d.long, d.lat])[0];
             })
@@ -194,21 +211,21 @@ var drawPopHisto = function() {
         binnedVals = binnedVals.slice(1);
 
         // Label associated map points with class corresponding to bin x
-        for ( var i = 0 ; i < dat.length ; i ++) {
-            for ( var j = thresholds.length - 1 ; j >= 0 ; j --) {
-                // console.log('dat[i].pop: ' + dat[i].pop + ', thresholds[j]: ' + thresholds[j]);
-                if ( dat[i].pop > thresholds[j] ) {
-                    $('#row' + i).addClass('pop' + thresholds[j]);
-                    // console.log(
-                    //     'row: ' + i + ', element: ' + $('#row' + i)
-                    // );
-                    // console.log(
-                    //     'class: ' + $('#row' + i).class
-                    // );
-                    break;
-                }
-            }
-        }
+        // for ( var i = 0 ; i < dat.length ; i ++) {
+        //     for ( var j = thresholds.length - 1 ; j >= 0 ; j --) {
+        //         // console.log('dat[i].pop: ' + dat[i].pop + ', thresholds[j]: ' + thresholds[j]);
+        //         if ( dat[i].pop > thresholds[j] ) {
+        //             $('#row' + i).addClass('pop' + thresholds[j]);
+        //             // console.log(
+        //             //     'row: ' + i + ', element: ' + $('#row' + i)
+        //             // );
+        //             // console.log(
+        //             //     'class: ' + $('#row' + i).class
+        //             // );
+        //             break;
+        //         }
+        //     }
+        // }
 
         // configure scales
         var xScale = d3.scale.ordinal()
@@ -232,7 +249,18 @@ var drawPopHisto = function() {
             .append('g')
             .attr('class', 'bar')
             .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
-            .on("click", function(d) { alert(d.x); });
+            .on("mouseover", function(d) {
+                d3.selectAll(".pop-bin-" + d.x).classed({
+                    'highlighted-city': true,
+                    'city-location': false,
+                });
+            })
+            .on('mouseout', function(d) {
+                d3.selectAll('.highlighted-city').classed({
+                    'highlighted-city': false,
+                    'city-location': true,
+                });
+            });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
@@ -334,7 +362,18 @@ var drawElevHisto = function() {
             .append('g')
             .attr('class', 'bar')
             .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
-            .on("click", function(d) { alert(d.x); });
+            .on("mouseover", function(d) {
+                d3.selectAll(".delev-bin-" + d.x).classed({
+                    'highlighted-city': true,
+                    'city-location': false,
+                });
+            })
+            .on('mouseout', function(d) {
+                d3.selectAll('.highlighted-city').classed({
+                    'highlighted-city': false,
+                    'city-location': true,
+                });
+            });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
@@ -426,7 +465,18 @@ var drawGVAHisto = function() {
             .append('g')
             .attr('class', 'bar')
             .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
-            .on("click", function(d) { alert(d.x); });
+            .on("mouseover", function(d) {
+                d3.selectAll(".gva2013-bin-" + d.x).classed({
+                    'highlighted-city': true,
+                    'city-location': false,
+                });
+            })
+            .on('mouseout', function(d) {
+                d3.selectAll('.highlighted-city').classed({
+                    'highlighted-city': false,
+                    'city-location': true,
+                });
+            });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
