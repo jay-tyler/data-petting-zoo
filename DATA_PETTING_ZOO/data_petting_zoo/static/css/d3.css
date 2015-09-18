@@ -14,18 +14,57 @@ Map Styles
   text-anchor: middle;
 }
 
-div.tooltip {
-    position: absolute;
-    text-align: center;
-    width: 60px;
-    height: 28px;
-    padding: 2px;
-    font: 12px sans-serif;
-    background: lightsteelblue;
-    border: 0px;
-    border-radius: 8px;
-    pointer-events: none;
+.map-content svg path:hover,
+.city-location,
+.highlighted-city {
+  cursor: crosshair;
 }
+
+div.tooltip {
+  display: inline-block;
+  position: absolute;
+  text-align: center;
+  width: auto;
+  height: auto;
+  padding: 10px;
+  font: 12px sans-serif;
+  background: #B0C4DE;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.city-location {
+  fill: #777;
+  position: relative;
+  z-index: 2;
+  r: 2.5;
+}
+
+.city-location:hover {
+  fill: #eee;
+  stroke: #000;
+  stroke-width: 1;
+  z-index: 9999;
+  r: 7;
+}
+
+.highlighted-city {
+  fill: #000;
+  opacity: 1;
+  position: relative;
+  z-index: 2;
+  r: 3;
+}
+
+.highlighted-city:hover {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1;
+  z-index: 9999;
+  r: 5;
+}
+
 
 /********************************
 Histogram Styles
@@ -46,14 +85,26 @@ Histogram Styles
   shape-rendering: crispEdges;
 }
 
-.pop-content .bar rect {
-  fill: lightsteelblue;
+.pop-bar {
+  fill: #B0C4DE;
 }
 
-.elev-content .bar rect {
+.pop-bar:hover {
+  fill: #cfdbeb;
+}
+
+.elev-bar {
   fill: #daa5a5;
 }
 
-.gva-content .bar rect {
+.elev-bar:hover {
+  fill: #e8c9c9;
+}
+
+.gva-bar {
   fill: #b8d8b8;
+}
+
+.gva-bar:hover {
+  fill: #d4e7d4;
 }

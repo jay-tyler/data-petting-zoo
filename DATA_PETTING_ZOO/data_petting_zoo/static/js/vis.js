@@ -1,8 +1,15 @@
 var pZoo = {
     'mapObj': {},
-    'popObj': {},
-    'elevObj': {},
-    'gvaObj': {},
+    'dataObj': {},
+    'popObj': {
+        thresholds: [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000]
+    },
+    'elevObj': {
+        thresholds: [-9999, 0, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 750]
+    },
+    'gvaObj': {
+        thresholds: [-9999, 10000, 15000, 20000, 25000, 30000, 35000, 40000]
+    },
 };
 
 
@@ -79,21 +86,21 @@ var drawMap = function() {
 
 var drawLabels = function() {
 
-        d3.select('.map-content').select('svg').selectAll(".subunit-label")
-            .data(
-                topojson
-                .feature(pZoo.mapObj.dat, pZoo.mapObj.dat.objects.subunits)
-                .features
-            )
-            .enter()
-            .append("text")
-            .attr("class", "country-label"
-            )
-            .attr("transform", function(d) {
-                return "translate(" + pZoo.mapObj.path.centroid(d) + ")";
-            })
-            .attr("dy", ".35em")
-            .text(function(d) { return d.properties.name; });
+    d3.select('.map-content').select('svg').selectAll(".subunit-label")
+        .data(
+            topojson
+            .feature(pZoo.mapObj.dat, pZoo.mapObj.dat.objects.subunits)
+            .features
+        )
+        .enter()
+        .append("text")
+        .attr("class", "country-label"
+        )
+        .attr("transform", function(d) {
+            return "translate(" + pZoo.mapObj.path.centroid(d) + ")";
+        })
+        .attr("dy", ".35em")
+        .text(function(d) { return d.properties.name; });
 };
 
 
@@ -101,27 +108,46 @@ var plotFamily = function() {
 
     d3.select('.map-content').select("svg").selectAll('circle').remove();
 
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         d3.select(".map-content").select("svg").selectAll("circle")
-            .data(pZoo.popObj.response.fam_df)
+            .data(pZoo.dataObj.fam_df)
             .enter()
             .append("circle")
+            .attr('class', function(d) {
+                var classList = 'city-location';
+                var thresholdArrays = [
+                    pZoo.popObj.thresholds,
+                    pZoo.elevObj.thresholds,
+                    pZoo.gvaObj.thresholds
+                ];
+                var relevantVarNames = ['pop', 'delev', 'gva2013'];
+                for (var threshCount = 0; threshCount < thresholdArrays.length; threshCount ++) {
+                    for (var threshIndex = 0; threshIndex < thresholdArrays[threshCount].length; threshIndex ++) {
+                        if (d[relevantVarNames[threshCount]] <= thresholdArrays[threshCount][threshIndex]) {
+                            classList += ' ' + relevantVarNames[threshCount] + '-bin-' + thresholdArrays[threshCount][threshIndex - 1];
+                            break;
+                        }
+                    }
+                }
+                return classList;
+            })
             .attr("cx", function(d) {
                 return pZoo.mapObj.projection([d.long, d.lat])[0];
             })
             .attr("cy", function(d) {
                 return pZoo.mapObj.projection([d.long, d.lat])[1];
             })
-            .attr("r", 4)
-            .style("fill", "grey")
+            .attr("id", function(d, i) {
+                return "row" + i;
+            })
             .on("mouseover", function(d) {
                 div.transition()
                     .duration(100)
                     .style("opacity", 0.9);
                 div.html(d.name)
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px");
+                    .style("left", (d3.event.pageX + 20) + "px")
+                    .style("top", (d3.event.pageY - 15) + "px");
                 })
             .on("mouseout", function(d) {
                 div.transition()
@@ -171,18 +197,35 @@ var drawPopHisto = function() {
     d3.select('.pop-content').selectAll('text').remove();
 
     // if our response contains no data (= is an error), we don't want to draw anything
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         // configure data
-        dat = pZoo.popObj.response.fam_df;
+        dat = pZoo.dataObj.fam_df;
         var origVals = [];
-        for (i = 0; i < dat.length; i++) { origVals.push(dat[i].pop); }
-        var thresholds = [0, 1000, 2000, 5000, 10000, 100000, 200000, 500000];
+        for (var n = 0; n < dat.length; n++) { origVals.push(dat[n].pop); }
+        var thresholds = pZoo.popObj.thresholds;
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
-        thresholds = thresholds.slice(1);
+        thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
+
+        // Label associated map points with class corresponding to bin x
+        // for ( var i = 0 ; i < dat.length ; i ++) {
+        //     for ( var j = thresholds.length - 1 ; j >= 0 ; j --) {
+        //         // console.log('dat[i].pop: ' + dat[i].pop + ', thresholds[j]: ' + thresholds[j]);
+        //         if ( dat[i].pop > thresholds[j] ) {
+        //             $('#row' + i).addClass('pop' + thresholds[j]);
+        //             // console.log(
+        //             //     'row: ' + i + ', element: ' + $('#row' + i)
+        //             // );
+        //             // console.log(
+        //             //     'class: ' + $('#row' + i).class
+        //             // );
+        //             break;
+        //         }
+        //     }
+        // }
 
         // configure scales
         var xScale = d3.scale.ordinal()
@@ -205,10 +248,23 @@ var drawPopHisto = function() {
             .enter()
             .append('g')
             .attr('class', 'bar')
-            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
+            .on("mouseover", function(d) {
+                d3.selectAll(".pop-bin-" + d.x).classed({
+                    'highlighted-city': true,
+                    'city-location': false,
+                });
+            })
+            .on('mouseout', function(d) {
+                d3.selectAll('.highlighted-city').classed({
+                    'highlighted-city': false,
+                    'city-location': true,
+                });
+            });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
+            .attr('class', 'pop-bar')
             .attr('y', pZoo.popObj.height)
             .attr('height', 0)
             .attr('width', xScale.rangeBand())
@@ -261,18 +317,28 @@ var drawElevHisto = function() {
     d3.select('.elev-content').selectAll('text').remove();
 
     // if our response contains no data (= is an error), we don't want to draw anything
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         // configure data
-        dat = pZoo.popObj.response.fam_df;
+        dat = pZoo.dataObj.fam_df;
         var origVals = [];
         for (i = 0; i < dat.length; i++) { origVals.push(dat[i].delev); }
-        var thresholds = [-9999, 0, 10, 20, 30, 40, 50, 100, 200, 300, 400, 500, 600, 750];
+        var thresholds = pZoo.elevObj.thresholds;
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
-        thresholds = thresholds.slice(1);
+        thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
+
+        // add class for
+        for ( i = 0 ; i < dat.length ; i ++) {
+            for ( j = 0 ; j < thresholds.length ; j ++) {
+                if ( dat[i].pop > thresholds[j] ) {
+                    $('#row' + i).addClass('elev' + thresholds[j]);
+                    break;
+                }
+            }
+        }
 
         // configure scales
         var xScale = d3.scale.ordinal()
@@ -295,10 +361,23 @@ var drawElevHisto = function() {
             .enter()
             .append('g')
             .attr('class', 'bar')
-            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
+            .on("mouseover", function(d) {
+                d3.selectAll(".delev-bin-" + d.x).classed({
+                    'highlighted-city': true,
+                    'city-location': false,
+                });
+            })
+            .on('mouseout', function(d) {
+                d3.selectAll('.highlighted-city').classed({
+                    'highlighted-city': false,
+                    'city-location': true,
+                });
+            });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
+            .attr('class', 'elev-bar')
             .attr('y', pZoo.elevObj.height)
             .attr('height', 0)
             .attr('width', xScale.rangeBand())
@@ -351,18 +430,17 @@ var drawGVAHisto = function() {
     d3.select('.gva-content').selectAll('text').remove();
 
     // if our response contains no data (= is an error), we don't want to draw anything
-    if ($.isEmptyObject(pZoo.popObj.response.error)) {
+    if ($.isEmptyObject(pZoo.dataObj.error)) {
 
         // configure data
-        dat = pZoo.popObj.response.fam_df;
+        dat = pZoo.dataObj.fam_df;
         var origVals = [];
         for (i = 0; i < dat.length; i++) { origVals.push(dat[i].gva2013); }
-        var thresholds = [-9999];
-        for (i = 10000; i < 40001; i = i + 5000) { thresholds.push(i); }
+        var thresholds = pZoo.gvaObj.thresholds;
         var binnedVals = d3.layout.histogram().bins(thresholds)(origVals);
 
         // this is a hack to not display the 0-bin
-        thresholds = thresholds.slice(1);
+        thresholds = thresholds.slice(1, -1);
         binnedVals = binnedVals.slice(1);
 
         // configure scales
@@ -386,10 +464,23 @@ var drawGVAHisto = function() {
             .enter()
             .append('g')
             .attr('class', 'bar')
-            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; });
+            .attr('transform', function(d) { return 'translate(' + xScale(d.x) + ', ' + yScale(d.y) / 1000 + ')'; })
+            .on("mouseover", function(d) {
+                d3.selectAll(".gva2013-bin-" + d.x).classed({
+                    'highlighted-city': true,
+                    'city-location': false,
+                });
+            })
+            .on('mouseout', function(d) {
+                d3.selectAll('.highlighted-city').classed({
+                    'highlighted-city': false,
+                    'city-location': true,
+                });
+            });
 
         // draw the rectangles - these are the actual visualization bits
         bar.append('rect')
+            .attr('class', 'gva-bar')
             .attr('y', pZoo.gvaObj.height)
             .attr('height', 0)
             .attr('width', xScale.rangeBand())
@@ -431,7 +522,7 @@ var doSearch = function(url, query) {
         $("#query").val('');
         if (response.error) {
             showErrorSheep(response);
-            pZoo.popObj.response = {};
+            pZoo.dataObj = {};
         }
         else if (response.message) {
             showRowInfo(response);
@@ -442,7 +533,7 @@ var doSearch = function(url, query) {
         else {
             showNameFamInfo(response);
         }
-        pZoo.popObj.response = response;
+        pZoo.dataObj = response;
         plotFamily();
         drawPopHisto();
         drawElevHisto();
@@ -497,6 +588,16 @@ var showRowInfo = function(response) {
 
 
 ////////////////////////////////////////////////////////////////
+// HISTOGRAM INTERACTIVITY
+////////////////////////////////////////////////////////////////
+
+
+var clickTest = (function(event) {
+    alert('testing');
+});
+
+
+////////////////////////////////////////////////////////////////
 // ON PAGE LOAD
 ////////////////////////////////////////////////////////////////
 
@@ -523,3 +624,28 @@ $( document ).ready( function() {
     });
 
 });
+
+
+////////////////////////////////////////////////////////////////
+// CLICK HANDLER
+////////////////////////////////////////////////////////////////
+
+
+var clickHandler = function(event) {
+    var target = event.target;
+
+    alert('target: ' + target + ', class: ' + target.class);
+
+    switch(target.class) {
+        case 'pop-bar':
+            alert('population histogram bar');
+            break;
+        case 'clear-highlights-btn':
+            clearHighlights(event);
+            break;
+
+    }
+};
+
+
+// $('body').on("click", clickHandler);
