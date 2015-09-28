@@ -526,7 +526,7 @@ var drawGVAHisto = function() {
 ////////////////////////////////////////////////////////////////
 
 
-var doSearch = function(url, query) {
+function doSearch(url, query) {
 
 
     $.ajax({
@@ -534,7 +534,7 @@ var doSearch = function(url, query) {
         dataType: 'json',
         url: url + query
     }).done(function(response) {
-        $("#query").val('');
+        alert('yo foo');
         if (response.error) {
             showErrorSheep(response);
             pZoo.dataObj = {};
@@ -555,6 +555,9 @@ var doSearch = function(url, query) {
         drawGVAHisto();
     }).fail(function(a,b,c) {
         alert('foo');
+        console.log(a,b,c);
+    }).complete(function() {
+        $("#query").val('');
     });
 };
 
