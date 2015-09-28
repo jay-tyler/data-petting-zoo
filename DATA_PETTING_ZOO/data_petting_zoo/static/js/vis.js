@@ -121,7 +121,6 @@ var plotFamily = function() {
             .attr("id", function(d, i) {
                 return "row" + i;
             })
-            // .attr("r", 4)
             .on("mouseover", function(d) {
                 div.transition()
                     .duration(100)
@@ -134,7 +133,8 @@ var plotFamily = function() {
                 div.transition()
                     .duration(500)
                     .style("opacity", 0);
-        });
+            })
+            .attr("r", "2.5px");
     }
 };
 
@@ -533,8 +533,7 @@ function doSearch(url, query) {
         type: "GET",
         dataType: 'json',
         url: url + query
-    }).done(function(response) {
-        alert('yo foo');
+    }).success(function(response) {
         if (response.error) {
             showErrorSheep(response);
             pZoo.dataObj = {};
@@ -553,6 +552,7 @@ function doSearch(url, query) {
         drawPopHisto();
         drawElevHisto();
         drawGVAHisto();
+    console.log(response);
     }).fail(function(a,b,c) {
         alert('foo');
         console.log(a,b,c);
