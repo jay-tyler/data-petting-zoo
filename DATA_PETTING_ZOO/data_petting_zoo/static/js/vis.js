@@ -483,8 +483,10 @@ var drawGVAHisto = function() {
         var xScale = d3.scale.ordinal()
             .domain(thresholds)
             .rangeRoundBands([0, pZoo.gvaObj.width], 0.2, 0.6);
+
+        var yMax = d3.max(binnedVals, function(d) { return d.y; });
         var yScale = d3.scale.linear()
-            .domain([d3.max(binnedVals, function(d) { return d.y; }), 0])
+            .domain([yMax, 0])
             .range([pZoo.gvaObj.height - (2 * pZoo.gvaObj.margin.top), 0]);
 
         // configure axes (just x-axis, no y-axis)
@@ -528,7 +530,10 @@ var drawGVAHisto = function() {
             .attr('width', xScale.rangeBand())
             .transition()
             .attr('y', function(d) { return pZoo.gvaObj.height - yScale(d.y); })
-            .attr('height', function(d) { return yScale(d.y); });
+            .attr('height', function(d) { 
+                if (yMax !== 0) { return yScale(d.y); }
+                else { return 0; } 
+            });
 
         // draw the axes
         d3.select('.gva-content').select('svg')
@@ -541,10 +546,16 @@ var drawGVAHisto = function() {
         var formatCount = d3.format(",.0f");
         bar.append("text")
             .attr("dy", ".75em")
-            .attr('y', function(d) { return pZoo.gvaObj.height - yScale(d.y) - 10; })
-            .attr('transform', function(d) { return 'translate(' + xScale.rangeBand() / 2 + ', 0)'; })
+            .attr('y', function(d) { 
+                if (yMax !== 0) { return pZoo.gvaObj.height - yScale(d.y) - 10; }
+                else { return pZoo.gvaObj.height; }            
+            })
+            .attr('transform', function(d) {
+                return 'translate(' + xScale.rangeBand() / 2 + ', 0)';
+            })
             .attr("text-anchor", "middle")
-            .text(function(d) { return formatCount(d.y); });
+            .text(function(d) { return formatCount(d.y); })
+            .style('fill', '#555');
     }
 };
 
